@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <div class="loading">
-
       <div class="pic">
         <div id="preloader_6">
           <span></span>
@@ -22,6 +21,8 @@
         </p>
         
       </div>
+      
+      <!-- <div class="dt_img"></div> -->
 
 
     </div>

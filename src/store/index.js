@@ -20,11 +20,12 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
     state: {
         user: {
-            uid: 0,    //用户ID
-            termId: 0,   // 用户年级学期ID
+            uid: 0,       //用户ID
+            gradeId:0,    //用户年级ID
+            termId: 0,    // 用户年级学期ID
             firstGame: 0, // 
             name: '闯关小英雄',
-            money: 3000,
+            money: 3000,    
             achievementNum: 0, // 获得成就总数
         },
         // 物品，收获物品
@@ -73,6 +74,13 @@ const store = new Vuex.Store({
         token: getToken()
     },
     mutations: {
+
+        //用户年级学期设置
+        SET_USER_GRADE_TERM(state,val){
+            state.user.gradeId = val.gradeId;
+            state.user.termId = val.termId;
+        },
+
         // 首次游戏改变状态
         startGame(state, pid) {
             state.user.firstGame = pid;
@@ -402,8 +410,11 @@ const store = new Vuex.Store({
                 })
             })
         },
-        
-
+        //设置用户年级和学期
+        setusergrade(context,value){
+            context.commit('SET_USER_GRADE_TERM',value);
+            context.commit('SAVE_GAME');
+        },
         // 设置新的用户名
         setusername(context, value) {
             context.commit('SET_USER_NAME', value);

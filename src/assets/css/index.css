@@ -2730,6 +2730,14 @@ top: 10px;
   background: url(../images/portrait0.jpg) no-repeat;
   background-size: 100% 100%;
 }
+
+.dt_img{
+  display: block;
+  width: auto;
+  height: auto;
+  background: url(../images/dt_img.png) no-repeat;
+  background-size: 100% 100%;
+}
 .portrait-item.sm {
   width: 60px;
   height: 60px;
@@ -3570,4 +3578,22 @@ animation-delay: .6s;
 }
 .user-message .ivu-form-item-error-tip{
   left: 10%;
+}
+.container-user .user-panle-reg,.container-user .user-panle-reg{
+  opacity: 0;
+}
+.container-user .show-in{
+  animation: go_in 0.5s;
+  opacity: 1;
+  visibility: visible;
+}
+
+@keyframes go_in{
+  0%{opacity: 0;}
+  50%{opacity: 0.5;}
+  100%{opacity: 1;}
+}
+
+.container-gt .container-grade,.container-gt .container-term{
+  padding: 10px 0;
 }

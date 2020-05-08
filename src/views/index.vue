@@ -3,7 +3,7 @@
     <div class="container" :class="{ beingskin: skinBox}">
 
       <div class="game-title">蒜瓣闯关</div>
-
+      
       <div class="user-box" @click="showUser">
 
         <div class="user-logo">
@@ -177,8 +177,7 @@
         <div class="popup-mask" v-show="skinBox" @click="hidePopup"></div>
       </div>
 
-
-
+      
 
       <!-- 功能弹窗面板 -->
       <div class="page-popup">
@@ -376,9 +375,6 @@
       </div>
 
 
-
-
-
       <!-- 
       <transition name="fade">
         <div class="loading" v-if="isLoad">
@@ -405,22 +401,33 @@
       <!-- 用户登录 -->
       <Modal v-model="modalLogin" class-name="hide-footer" :mask-closable="false" :closable="false" @on-ok="keepUser">
 
-        <user-login></user-login>
+        <user-login v-model="modalLogin"></user-login>
 
       </Modal>
 
+      <!-- 用户年级学期选择 -->
+      <Modal v-model="modalGrade" class-name="hide-footer" :mask-closable="false" :closable="false" @on-ok="keepUser">
+
+        <p style="text-align:center">年级|学期</p>
+        <user-grade></user-grade>
+        
+      </Modal>
 
 
       <!-- 用户信息 -->
       <Modal v-model="modalUser" class-name="hide-footer" @on-ok="keepUser">
+
         <div class="user-form" v-if="!editUserName">
+
           <div class="head-portrait">
             <span class="portrait-item portrait0"></span>
           </div>
+
           <div class="user-name">
             {{user.name}}
             <Icon type="ios-create" @click="editUser" />
           </div>
+
           <div class="user-zl">
             <Row>
               <i-col span="12">
@@ -453,7 +460,8 @@
                 <div class="uz-i">段位：0</div>
               </i-col>
             </Row>
-          </div>          
+          </div>  
+
         </div>
         <div class="user-form" v-if="editUserName">
           <i-form :model="user">
@@ -634,7 +642,8 @@ import HatForg from "@/components/HatForg";
 import ClothesForg from "@/components/ClothesForg";
 import screenfull from "screenfull";
 
-import UserLogin from "@/views/user"
+import UserLogin from "@/views/user";
+import UserGrade from "@/components/UGrade";
 export default {
   name: "index",
   data() {
@@ -725,7 +734,8 @@ export default {
     ClothesDefault,
     HatForg,
     ClothesForg,
-    UserLogin
+    UserLogin,
+    UserGrade
   },
   computed: {
     // 计算已完成成就的数量
@@ -778,7 +788,11 @@ export default {
     },
     value() {
       return this.$store.state.value;
+    },
+    modalGrade(){
+      return !this.modalLogin
     }
+
   },
   mounted() {
     this.init(); // 初始化
@@ -1087,6 +1101,10 @@ export default {
     // 公共失败提示
     error: function(val) {
       this.$Message.error(val);
+    },
+    handleValue(value){
+      this.modalLogin = value;
+      console.log(this.modalLogin,"弹出框消失")
     }
   },
   // 过滤器
