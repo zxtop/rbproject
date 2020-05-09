@@ -71,12 +71,20 @@ const store = new Vuex.Store({
         modalLevel: false,
         // 进度条
         value: 0,
-        token: getToken()
+        token: getToken(),
+        currId:0,  //当前用户id
+        currNickName:'' //当前用户昵称
     },
     mutations: {
-
+        //登录后设置用户id和name
+        LOGIN_ID_NAME(state,val){
+            state.currId = val.id;
+            state.currNickName = val.nickName;
+        },
         //用户年级学期设置
         SET_USER_GRADE_TERM(state,val){
+            state.user.uid = val.currId;
+            state.user.name = val.currNickName;
             state.user.gradeId = val.gradeId;
             state.user.termId = val.termId;
         },
@@ -234,6 +242,7 @@ const store = new Vuex.Store({
             state.user.name = val;
             state.user.money -= 1000;
         },
+        
 
         // 设置服装
         REPLACE_DRESS(state, price) {
@@ -410,7 +419,8 @@ const store = new Vuex.Store({
                 })
             })
         },
-        //设置用户年级和学期
+        
+        //设置用户年级和学期、用户id、用户名称
         setusergrade(context,value){
             context.commit('SET_USER_GRADE_TERM',value);
             context.commit('SAVE_GAME');

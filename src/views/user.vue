@@ -12,7 +12,7 @@
                         </form-item>
 
                         <form-item  prop="passWord">
-                            <i-input v-model="formValidate.passWord" placeholder="请输入密码"></i-input>
+                            <i-input type="password" v-model="formValidate.passWord" placeholder="请输入密码"></i-input>
                         </form-item>
                     </div>
 
@@ -171,6 +171,9 @@ import {regUser} from '@/api/user';
                                     this.message = false;
                                     this.$emit('input',this.message);
                                     this.$Message.success('登录成功');
+                                    //返回登录信息----记录用户名字和用户id
+                                    // console.log(value.data.user);
+                                    this.$store.commit('LOGIN_ID_NAME',value.data.user);
                                     //年级 学期选择
                                     
                                     //存储用户设置

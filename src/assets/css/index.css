@@ -3594,6 +3594,18 @@ animation-delay: .6s;
   100%{opacity: 1;}
 }
 
-.container-gt .container-grade,.container-gt .container-term{
-  padding: 10px 0;
+*{touch-action: none;}
+.grade-btn .ivu-form-item-content{margin-left: 0px!important;}
+.grade-btn .ivu-form-item-content button{display: block;margin: 0 auto;}
+
+.user-grade .click_grade{
+  display: block;
+  width: 93px;
+  height: 39px;
+  overflow: hidden;
+  background: url(../images/grade_btn.png) no-repeat;
+  background-size: 100% 100%;
+  position: absolute;
+  left: 6px;
+  top:7px;
 }

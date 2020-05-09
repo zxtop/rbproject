@@ -31,7 +31,7 @@
           <span class="nav-icon">
             <i class="ivu-icon ivu-icon-ios-shirt"></i>
           </span>
-          <span class="nav-name">换装</span>
+          <span class="nav-name">装扮</span>
         </li>
 
         <li @click="showPopup(shop)">
@@ -185,7 +185,7 @@
         <div class="popup-item" v-show="isSkin">
 
           <div class="popup-head border-bottom-1px">
-            <span class="popup-title fl">换装</span>
+            <span class="popup-title fl">装扮</span>
             <i class="ivu-icon ivu-icon-md-close-circle" @click="hidePopup"></i>
           </div>
 
@@ -242,9 +242,9 @@
                   </li>
                 </ul>
               </tab-pane>
-
-              <tab-pane label icon="md-rose">
-                <p style="padding-top: 40px; text-align: center;">首饰饰品开发中...</p>
+              <!-- <Icon type="logo-octocat" /> -->
+              <tab-pane label icon="logo-octocat">
+                <p style="padding-top: 40px; text-align: center;">宠物开发中...</p>
               </tab-pane>
 
               <tab-pane label icon="md-glasses">
@@ -408,14 +408,18 @@
       <!-- 用户年级学期选择 -->
       <Modal v-model="modalGrade" class-name="hide-footer" :mask-closable="false" :closable="false" @on-ok="keepUser">
 
-        <p style="text-align:center">年级|学期</p>
-        <user-grade></user-grade>
+        <p style="text-align:center;margin-bottom:20px">年级|学期</p>
+        <user-grade v-model="modalGrade"></user-grade>
         
       </Modal>
 
 
       <!-- 用户信息 -->
       <Modal v-model="modalUser" class-name="hide-footer" @on-ok="keepUser">
+        <!-- 年级选择按钮 -->
+        <div class="user-grade">
+          <span class="click_grade" @click="showGrade"></span>
+        </div>
 
         <div class="user-form" v-if="!editUserName">
 
@@ -714,7 +718,8 @@ export default {
       isFullscreen: false,
       shoppingNum: 0, // 购物数量
       percent: 0, // 加载进度
-      showPress: true
+      showPress: true,
+      modalGrade:false
     };
   },
   components: {
@@ -788,14 +793,19 @@ export default {
     },
     value() {
       return this.$store.state.value;
-    },
-    modalGrade(){
-      return !this.modalLogin
     }
 
   },
   mounted() {
     this.init(); // 初始化
+  },
+  watch: {
+    modalLogin(newname,oldname){
+      // console.log(newname,oldname)
+      if(oldname){
+        this.modalGrade = true;
+      }
+    }
   },
   methods: {
     // 初始化
@@ -1102,9 +1112,8 @@ export default {
     error: function(val) {
       this.$Message.error(val);
     },
-    handleValue(value){
-      this.modalLogin = value;
-      console.log(this.modalLogin,"弹出框消失")
+    showGrade(){
+      this.modalGrade = true;
     }
   },
   // 过滤器

@@ -61,3 +61,10 @@ export function login(data) {
     const url = Global.myURL+'api/systemconfig/student/student_point_no_Page'
     return http.get(url,params)
   }
+
+   //更改用户信息
+   export function SetUserGradeTemId(data){
+    const url = Global.myURL+'api/systemconfig/student/update_student_info'
+    return http.post(url,data)
+  }
+
