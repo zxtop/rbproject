@@ -1,6 +1,7 @@
 <template>
     <div class="subject-wrap">
-
+        <!-- 背景图片随机加载 -->
+        <c-bg></c-bg>
         <div class="subject-head" @click="hideSubject">
             <i class="ivu-icon ivu-icon-ios-arrow-back"></i>返回
         </div>
@@ -9,55 +10,72 @@
 
             <div class="question_tile" ref="main2">
                 <div class="title_bg">
-                    答题进度：(10/{{question_index}})
+                    <img :src="dt_img" alt="">
+                    <span>{{question_index}}/10</span>
+                </div>
+            </div>
+
+            <div class="question_pro_ifo">
+                <div class="question_proess">
+                    <div class="proess_out">
+                        <Progress :percent="proess_in" hide-info stroke-color="#59db08" />
+                    </div>
                 </div>
             </div>
 
             <div class="text-main2" ref="main3">
                 <div class="showQuestion">
-                    <p style="font-size:1.6em;" v-html="questionForm.content"></p>
+                    <div class="question_content" style="font-size:14px;" v-html="questionForm.content"></div>
 
                     <div class="questio_option">
-                        <p style="font-size:1.5em;" v-html="questionForm.option"></p>
+                        <p style="font-size:14px;" v-html="questionForm.option"></p>
                     </div>
                 </div>
 
-                <div   ref="eggexp" style="width:100vw;height:5vh;position: relative;"><!--提示用--></div>
+                <div  ref="eggexp" style="width:100vw;height:5vh;position: relative;"><!--提示用--></div>
 
+                <!-- 判断题 -->
                 <div class="select_judge" v-if="questionForm.type && questionForm.type.name =='判断题'">
-                    <ul>
+                    <ul ref="btn_out1">
                         <li class="btn">
-                            <c-btn1 :zimuText="html_yes_iocn" :option="html_yes_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
+                            <c-btn1 @inClick="getClick" :zimuText="html_yes_iocn" :option="html_yes_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
                         </li>
+
                         <li class="btn">
-                            <c-btn1 :zimuText="html_no_iocn" :option="html_no_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
+                            <c-btn1 @inClick="getClick" :zimuText="html_no_iocn" :option="html_no_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
                         </li>
+
                     </ul>
                 </div>
+
+                <!-- 不是判断题 -->
                 <div
                     class="select_option"
                     v-if="questionForm.type && questionForm.type.name != '判断题'"
                 >
-                    <ul>
+                    <ul ref="btn_out2">
                         <li class="btn">
-                            <c-btn1 :zimuText="html_a_iocn" :option="html_a_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
+                            <c-btn1 @inClick="getClick" :zimuText="html_a_iocn" :option="html_a_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
                         </li>
                         <li class="btn">
-                            <c-btn1 :zimuText="html_b_iocn"  :option="html_b_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
+                            <c-btn1 @inClick="getClick" :zimuText="html_b_iocn"  :option="html_b_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
                         </li>
                         <li class="btn">
-                            <c-btn1 :zimuText="html_c_iocn" :option="html_c_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
+                            <c-btn1 @inClick="getClick" :zimuText="html_c_iocn" :option="html_c_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
                         </li>
                         <li class="btn">
-                            <c-btn1 :zimuText="html_d_iocn" :option="html_d_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
+                            <c-btn1 @inClick="getClick" :zimuText="html_d_iocn" :option="html_d_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
+
+
         <div class="result_fail" v-if="fail">            
             <c-ghost @outResetQuestionList="beginQuestionClick"></c-ghost>
         </div>
+
         <div class="result_success" v-if="success">
             <c-box @outResetQuestionList="beginQuestionClick"></c-box>
         </div>
@@ -75,6 +93,8 @@ import {
 import CGhost from "@/components/CGhost";
 import CBox from "@/components/CBox";
 import CBtn1 from "@/components/CBtn1";
+import CBg from "@/components/CBg";
+
 export default {
     data() {
         return {
@@ -117,30 +137,45 @@ export default {
 
             fail: false,    //挑战失败
             success: false,   //挑战成功
+            dt_img:'../static/images/dt.png',
+            currentClick:false,
+            num:0
+
         };
     },
     components:{
         CGhost,
         CBox,
         CBtn1,
+        CBg
+    },
+    computed: {
+      proess_in(){
+          return this.question_index * 10
+      }  
     },
     created() {
         //this.school_part = this.school_parts[0];
         this.params.type_ids = this.question_types_xx; //默认赋值小学
         this.uid = this.$store.state.user.uid;
         //this.u_name = this.$store.getters.user_name;
-        console.log('当前激活的关卡：' + this.$store.state.currSubject);
+        console.log('当前激活的关卡：' + this.$store.state.currSubject,this.$store.state.currSubject.difficulty);
+
         // 判断如果有激活的关卡则加载试题
         if (this.$store.state.currSubject.difficulty) {
             this.beginQuestionClick();
+
             // getUserLevel(this.uid).then(res => {
-            //     console.log(res);
+            //     console.log(res,'dddddd');
             //     this.u_level = res.data.student.level;
             //     this.u_gold_count = res.data.student.gold_count;
             //     this.term_id = res.data.student.term_id; //这里现在用不到， 没实现根据term_id 反推到 term_index
             //     this.beginQuestionClick();
             // });
         }
+    },
+    updated(){
+
     },
     methods: {
         hideSubject() {
@@ -171,9 +206,10 @@ export default {
             this.params.term_id = this.term_id;
             this.params.user_id = this.uid;
             //console.log(this.params)
-            console.log(this.$store.state.currSubject.difficulty)
-            this.params.difficulty = this.$store.state.currSubject.difficulty
-            console.log('ddddd',this.params)
+            // console.log(this.$store.state.currSubject.difficulty);
+            this.params.difficulty = this.$store.state.currSubject.difficulty;
+            console.log('当前题目组的params.....',this.params);
+
             GetPageQuestion(this.params)
                 .then(res => {
                     //self.knowledge = response.data.data;
@@ -194,12 +230,21 @@ export default {
             this.question_index = 0;
         },
         outanwserCilck(re){
-            console.log('回答的正确吗？',re)
+            console.log('回答的正确吗？',re);
             if(re){
                 this.u_yes_num += 1;
                 //this.updataUserData();
             }
-            setTimeout(this.nextQuestion, 1000);
+            // setTimeout(this.nextQuestion, 1000);
+            // this.nextQuestion();
+        },
+
+        getClick(val){
+            this.num++;
+            // console.log('dayinnnn',val,this.num)
+            if(val && this.num == 1){
+                setTimeout(this.nextQuestion, 1000);
+            }
         },
         //更新用户的成绩
         updataUserData() {            
@@ -221,12 +266,13 @@ export default {
             //this.clearHtml();
             this.popAdd('下一题');
             this.question_index += 1;
-            
             if (this.question_index == 10) {
                 this.showResult();
             } else {
                 this.questionForm = this.questionslist[this.question_index];
+                this.num = 0
             }
+            
         },
         // 弹出收成
     popAdd(meg) {
@@ -265,6 +311,7 @@ export default {
         showResult() {
             this.questionslist = null;
             this.question_index = 0;
+            this.num = 0;
             console.log('最终结果是：'+ this.u_yes_num)
             if (this.u_yes_num == 10) {
                 console.log("全部答对");
@@ -299,12 +346,13 @@ img{
 .question_tile {
     width: 100%;
     text-align: center;
+    margin-bottom: 10px;
 }
 .title_bg {
     position: static;
     margin: 0 auto;
     width: 100%;
-    height: 1.2rem;
+    /* height: 1.2rem; */
     font-size: 1.2em;
 }
 .question-text .text-title {
@@ -379,4 +427,31 @@ input:focus {
     align-items: center;
     height: 100vh;
 }
+
+/* 进度条样式 */
+.question_pro_ifo{
+    padding:0 0.5rem
+}
+.question_proess{
+    border-radius: 0.5rem;
+    padding:.4rem .4rem;
+    width: 100%;
+    height: 2.2rem;
+    position: relative;
+    background: #f6bc1c;
+    overflow: hidden;
+}
+.proess_out{
+    width: 100%;
+    background: #a55a2b;
+    height: 1.4rem;
+    padding: .1rem .4rem;
+    border-radius: 0.5rem;
+}
+
+.showQuestion .question_content >>> img{
+    width: 100%!important;
+}
+.title_bg img{width: 100px;vertical-align: middle;}
+.title_bg span{color: #fff;font-size: 24px;vertical-align: middle;}
 </style>

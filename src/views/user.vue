@@ -3,6 +3,7 @@
         <div class="container-user">
 
             <div v-show="isLog" class="user-panle-log" :class="{'show-in':isLog}">
+                
                 <p style="padding:20px;text-align:center">用户登录</p>
                 <i-form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
                     
@@ -16,7 +17,7 @@
                         </form-item>
                     </div>
 
-                   
+                    
                     <form-item>
                         <Button type="primary" @click="handleSubmit('formValidate')">登录</Button>
                         <span>还没注册?</span> <span style="color:blue" @click="changePanle()">点击注册</span>
@@ -24,6 +25,9 @@
                     </form-item>
 
                 </i-form>
+                <div class="user_visitor">
+                    <span style="color:#E88D35" @click="handleVisitor">游客登录</span>
+                </div>
             </div>
 
             <div v-show="!isLog" class="user-panle-reg" :class="{'show-in':!isLog}">
@@ -221,6 +225,11 @@ import {regUser} from '@/api/user';
                
                 this.handleReset('formValidate');
                 this.handleReset('regValidate');
+            },
+            handleVisitor(){
+                let str = '游客登录'
+                this.$emit('getVisitor');
+                this.$store.dispatch('saveuserId',str)
             }
             
         }

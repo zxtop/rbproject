@@ -15,12 +15,15 @@ import {
     setToken,
     removeToken
 } from '@/util/token';
+
+import {UpdateUserInfo} from '@/api/user'; //用户的 级别和 金币接口
+
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state: {
         user: {
-            uid: 0,       //用户ID
+            uid: null,       //用户ID
             gradeId:0,    //用户年级ID
             termId: 0,    // 用户年级学期ID
             firstGame: 0, // 
@@ -117,7 +120,6 @@ const store = new Vuex.Store({
             state.chick.eat = true;
             this.commit('checkAchievemnt', 1);
             this.commit('SAVE_GAME');
-
         },
         shopFood(state, name) {
             // 得到需要购买的食物
@@ -243,7 +245,6 @@ const store = new Vuex.Store({
             state.user.money -= 1000;
         },
         
-
         // 设置服装
         REPLACE_DRESS(state, price) {
             if (price.type == 0) {
@@ -297,21 +298,26 @@ const store = new Vuex.Store({
         },
         // 开启闯关
         START_SUBJECT(state, val) {
+            console.log('开启激活....',val)
             // val 是下学科的 index
             if(val > 0){
                 Vue.prototype.$popUp('暂未开通该学科的闯关！', '敬请期待');
                 return false;
             }
+
             // 当前关卡的名字
             var name = state.currSubject.name;
+            // console.log('开启闯关...',name);
+
             //当前 关卡的 Index
-            var pIndex = ''
+            var pIndex = '';
             state.subjectList[val].list.forEach((obj, index) => {
                 if (obj.name == name) {
                     pIndex = index;
                     state.currSubject = obj;                    
                 }
             });
+
             //console.log(pIndex)
             if (pIndex > 0) {
                 var prveItem = state.subjectList[val].list[pIndex - 1].learning;
@@ -368,15 +374,32 @@ const store = new Vuex.Store({
                 user: state.user,
                 foods: state.foods,
                 goods: state.goods,
-                subjectList: state.subjectList
+                subjectList: state.subjectList,
+                token:state.token
             };
-            localStorage.setItem('farmDate', JSON.stringify(data))            
+            localStorage.setItem('farmDate', JSON.stringify(data));
+            
+            //更新用户等级和金币数
+            let user_data={
+                userId:data.user.uid,
+                level:data.chick.level,
+                goldCount:data.user.money
+            }
+
+            UpdateUserInfo(user_data)
+            .then(response=>{
+                if(response.data.result == 'success'){
+                    // console.log('更改了用户名，，，更新等级和金币数')
+                }else{
+                    // console.log('更新等级和金币数失败')
+                }
+            })
         },
 
         // 读档
         LOAD_GAME(state) {
             let data = JSON.parse(localStorage.getItem('farmDate'))
-            console.log(data)
+            console.log('读档。。。',data)
             if (!data) return
             state.achievement.forEach(oldAchievement => {
                 data.achievement.forEach(newAchievement => {
@@ -396,10 +419,17 @@ const store = new Vuex.Store({
                 state.user = data.user,
                 state.foods = data.foods,
                 state.goods = data.goods,
-                state.subjectList = data.subjectList
+                state.subjectList = data.subjectList,
+                state.token = data.token
+                
         },
         SET_TOKEN: (state, token) => {
             state.token = token;
+        },
+        //更改uid
+        SAVE_UID:(state,uid)=>{
+            state.user.uid = uid;
+            console.log(state.user.uid)
         }
     },
     actions: {
@@ -491,6 +521,10 @@ const store = new Vuex.Store({
         },
         // 存档
         savegame(context) {
+            context.commit('SAVE_GAME');
+        },
+        saveuserId(context,value){
+            context.commit('SAVE_UID',value)
             context.commit('SAVE_GAME');
         }
     }

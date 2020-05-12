@@ -1,12 +1,13 @@
 <template>
     <div class="loading-dock">
-        <button class="submit" @click="handleBtmClick">
+        <button class="submit" @click="handleBtmClick" :disabled='isAble'>
             <i class="ivu-icon ivu-icon-ios-checkmark" v-if="checkmark"></i>
             <i class="ivu-icon ivu-icon-ios-close" v-if="close"></i>
             {{showZimu}}
         </button>
     </div>
 </template>
+
 <script>
 export default {
     name: "acbd",
@@ -14,7 +15,8 @@ export default {
     data() {
         return {
             checkmark: false,      //对号的图标 默认不显示
-            close: false           // 查号的图标  默认不显示
+            close: false,        // 查号的图标  默认不显示
+            isAble:false
         };
     },
     computed: {
@@ -26,8 +28,13 @@ export default {
             }
         }
     },
+    mounted () {
+    //   console.log(this.isCan,"ddddddddd")  
+    },
     methods: {
         handleBtmClick(e) {
+            // console.log("点击....",this.$parent,this.$parent.$refs,e,e.currentTarget);
+            this.isAble = true;
             var submit = e.currentTarget;
             var result = false;
             var btn_class ='wrong'
@@ -41,15 +48,19 @@ export default {
             }
             submit.blur();
             submit.classList.add(btn_class);
+            // e.currentTarget.setAttribute('disabled',true)
+            
+            self.$emit('inClick',true)
             setTimeout(function() {
-                
-                setTimeout(function() {
-                    submit.classList.remove(btn_class);
-                    self.close = false;
-                    self.checkmark = false;
-                    self.$emit("outBtnClick", result);
-                }, 1000);
+                submit.classList.remove(btn_class);
+                self.close = false;
+                self.checkmark = false;
+                self.$emit("outBtnClick", result);
+                self.isAble = false;
             }, 500);
+
+            
+            
         }
     }
 };

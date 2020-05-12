@@ -349,6 +349,7 @@
                 :key="subject.type"
               >
                 <ul class="subject-list">
+                  
                   <li
                     v-for="item in subject.list"
                     :key="item.name"
@@ -363,9 +364,12 @@
                       </div>
                       <img :src="item.img" />
                     </div>
+
                     <p class="subject-name">{{item.name}}</p>
                   </li>
+
                 </ul>
+
               </tab-pane>
             </tabs>
             <p style="padding-top: 50px; text-align: center; display: none;">学习功能开发中...</p>
@@ -401,7 +405,7 @@
       <!-- 用户登录 -->
       <Modal v-model="modalLogin" class-name="hide-footer" :mask-closable="false" :closable="false" @on-ok="keepUser">
 
-        <user-login v-model="modalLogin"></user-login>
+        <user-login v-model="modalLogin" @getVisitor="hideLogin"></user-login>
 
       </Modal>
 
@@ -415,13 +419,14 @@
 
 
       <!-- 用户信息 -->
-      <Modal v-model="modalUser" class-name="hide-footer" @on-ok="keepUser">
-        <!-- 年级选择按钮 -->
-        <div class="user-grade">
-          <span class="click_grade" @click="showGrade"></span>
-        </div>
+      <Modal v-model="modalUser" class-name="hide-footer" @on-ok="keepUser" @on-cancel="hideUser">
+        
 
         <div class="user-form" v-if="!editUserName">
+          <!-- 年级选择按钮 -->
+          <div class="user-grade">
+            <span class="click_grade" @click="showGrade"></span>
+          </div>
 
           <div class="head-portrait">
             <span class="portrait-item portrait0"></span>
@@ -467,6 +472,7 @@
           </div>  
 
         </div>
+
         <div class="user-form" v-if="editUserName">
           <i-form :model="user">
             <p class="pl-title">修改用户名需要1000金币</p>
@@ -648,16 +654,19 @@ import screenfull from "screenfull";
 
 import UserLogin from "@/views/user";
 import UserGrade from "@/components/UGrade";
+
+import {UpdateUserInfo} from '@/api/user'; //用户的 级别和 金币接口
+
 export default {
   name: "index",
   data() {
     return {
-      modalLogin:true,//用户登录开关
+      modalLogin:false, //用户登录开关
       effects: 2,
       //isLoad: true,
       editUserName: false,
       modalUser: false,
-      skinBox: false, //打开弹出遮罩
+      skinBox: false,   //打开弹出遮罩
       modalAchievement: false,
       modalHelp: false,
       modalShop: false,
@@ -666,14 +675,14 @@ export default {
       modalGood: false,
       goodDetails: false,
       isSubject: false, //是否做题组件显示
-      sellNum: 1, // 物品出售默认值
+      sellNum: 1,       //物品出售默认值
       skin: "skin",
       shop: "shop",
       bag: "bag",
       study: "study",
       isSkin: false, //换装
       isShop: false, //商店
-      isBag: false, //背包
+      isBag: false,  //背包
       isStudy: false,
       buttonSize: "small",
       newUserName: "",
@@ -719,9 +728,44 @@ export default {
       shoppingNum: 0, // 购物数量
       percent: 0, // 加载进度
       showPress: true,
-      modalGrade:false
+      modalGrade:false,
+      modalVistor:false
     };
   },
+  beforeCreate () {
+    if (window.performance.navigation.type == 1) {
+      console.log("页面被刷新");
+      //判断用户是否登录
+      let data = JSON.parse(localStorage.getItem('farmDate'));
+      if(data.user.uid && data.user.uid!=='游客登录'){
+        console.log('用户已经登录')
+      }else{
+        console.log('用户还没登录');
+        if(data.user.uid !== '游客登录'){
+          window.localStorage.clear();
+        }else{
+          console.log('游客登录')
+        }
+      }
+    }else{
+      console.log("首次被加载")
+      window.localStorage.clear();
+    }
+  },
+  created () {
+
+    //判断用户是否登录
+    this.modalLogin = true;
+    let data = JSON.parse(localStorage.getItem('farmDate'));
+    if(!data){
+      this.modalLogin = true;
+    }else{
+      this.modalLogin = false;
+      this.modalGrade = false;
+    }
+
+  },
+
   components: {
     CSunlight,
     CBee,
@@ -797,13 +841,18 @@ export default {
 
   },
   mounted() {
+    
     this.init(); // 初始化
+    
   },
   watch: {
     modalLogin(newname,oldname){
       // console.log(newname,oldname)
-      if(oldname){
+      if(oldname && !this.modalVistor){
         this.modalGrade = true;
+      }
+      if(oldname && this.modalVistor){
+        this.modalGrade = false;
       }
     }
   },
@@ -817,9 +866,29 @@ export default {
         self.$store.dispatch("loadgame");
         // 判断是否是新的一天
         //self.isNewDay(time);
+
         // 判断是否在进食
         self.chickIsEat();
+
+        //加载登录后 存入用户等级和金币数
+        // console.log(self.user.uid,self.user.money,self.chick.level,'userrrrrrr')
+        var userData = {
+          userId:self.user.uid,
+          level:self.chick.level,
+          goldCount:self.user.money
+        };
+
+        UpdateUserInfo(userData)
+        .then(response=>{
+          if(response.data.result == 'success'){
+            console.log('更新用户等级和金币数成功...')
+          }else{
+            console.log('更新用户等级和金币数失败...')
+          }
+        })
+
       });
+
     },
     isNewDay: function(time) {},
     // 判断是否正在进食
@@ -828,11 +897,13 @@ export default {
       let loadDate = new Date().getTime();
       // 判断上一次是否进食结束
       let isEat = this.$store.state.endDate - loadDate;
+      // console.log('判断是否在进食.....',isEat)
       if (isEat > 0) {
         this.$store.state.chick.eat = true;
         this.countdown(loadDate);
       } else {
-        this.$store.commit("CHICK_IS_EAT");
+        // this.$store.commit("startsubject");
+        this.$store.commit("SAVE_GAME")
         return;
       }
     },
@@ -1114,8 +1185,17 @@ export default {
     },
     showGrade(){
       this.modalGrade = true;
+    },
+    hideUser(){
+      this.editUserName = false;
+    },
+    hideLogin(){
+      console.log('游客登录')
+      this.modalLogin = false; 
+      this.modalVistor = true;
     }
   },
+
   // 过滤器
   filters: {
     // 格式化显示时间 毫秒转：天-小时-分钟-秒
