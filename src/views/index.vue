@@ -1,9 +1,9 @@
 <template>
   <div id="app" :class="{onSubject: isSubject}">
     <div class="container" :class="{ beingskin: skinBox}">
-
       <div class="game-title">蒜瓣闯关</div>
-      
+
+      <!-- 用户资料 -->
       <div class="user-box" @click="showUser">
 
         <div class="user-logo">
@@ -65,7 +65,7 @@
 
       </ul>
 
-
+      <!-- 游戏帮助 -->
       <ul class="nav-help">
         <li @click="showHelp()">
           <span class="nav-icon">
@@ -102,50 +102,88 @@
         <!-- 鸡饭碗 
         <c-trough></c-trough>-->
         <c-dog></c-dog>
-        <!-- chick -->
+
+        <!-- 蒜瓣 -->
         <div class="chick" :class="{noeat:!chick.eat}">
+
+          <div class="chick-swiper">
+            <span>{{randomText}}</span>
+          </div>
+
           <!-- 进食倒计 -->
           <div class="countdown-box">
+
             <p class="countdown-text" :class="{active : !chick.eat }">{{content}}{{setTime}}</p>
+
             <!-- 进食进度条 -->
             <div class="progress" v-if="value != 0 && value < 100">
               <div class="progress-content" :style="'width:' + value + '%' "></div>
             </div>
+
           </div>
-          <!-- 装扮-帽子 -->
-          <div class="skin-hat">
-            <keep-alive>
-              <component :is="chick.componentHat"></component>
-            </keep-alive>
-          </div>
+
+          
           <div class="chick-head" style="display: none;"></div>
+
+
+          <!-- 蒜瓣身体 -->
           <div class="chick-body">
+
+            <!-- 装扮-套装 -->
+            <div class="skin-suit" v-show="chick.currentCompId == 0">
+              <keep-alive>
+                <component :is="chick.componentSuit"></component>
+              </keep-alive>
+            </div>
+
+            <!-- 装扮-帽子 -->
+            <div class="skins-hat" v-show="chick.currentCompId == 1">
+              <keep-alive>
+                <component :is="chick.componentHat"></component>
+              </keep-alive>
+            </div>
+
             <!-- 装扮-衣服 -->
-            <keep-alive>
-              <component :is="chick.componentClothes"></component>
-            </keep-alive>
-            <!-- 青蛙衣服 -->
+            <div class="skin-cloes" v-show="chick.currentCompId == 2">
+              <keep-alive>
+                <component :is="chick.componentClothes"></component>
+              </keep-alive>
+            </div>
           </div>
-          <div class="eye">
+
+          <!-- 蒜瓣眼睛 -->
+          <div class="eye" :class="{
+            eye_hat:chick.currentPlay == '1forg',
+            eye_super:chick.currentPlay == '0super'}">
             <span></span>
             <span></span>
           </div>
-          <div class="blusher">
+
+          <!-- 蒜瓣红腮 -->
+          <div class="blusher" style="display:none">
             <span></span>
             <span></span>
           </div>
+
+
+          <!-- 未用 -->
           <div class="face" style="display: none;"></div>
+
           <div class="wing-left" style="display: none;"></div>
+
           <div class="wing-content" style="display: none;">
             <span></span>
           </div>
+
           <div class="arm" style="display: none;">
             <span></span>
             <span></span>
             <span></span>
             <span></span>
           </div>
+
           <div class="wing-r" style="display: none;"></div>
+
           <div class="wing-right">
             <span></span>
             <span></span>
@@ -163,25 +201,30 @@
               </div>
             </div>
           </div>
+
           <div class="mouth" style="display: none;">
             <span></span>
             <span></span>
             <p></p>
           </div>
+
           <div class="foot" style="display: none;">
             <span></span>
             <span></span>
           </div>
+
         </div>
+
         <!-- 弹窗遮罩层 -->
         <div class="popup-mask" v-show="skinBox" @click="hidePopup"></div>
+
       </div>
 
       
-
       <!-- 功能弹窗面板 -->
       <div class="page-popup">
 
+        <!-- 装扮功能 -->
         <div class="popup-item" v-show="isSkin">
 
           <div class="popup-head border-bottom-1px">
@@ -190,15 +233,14 @@
           </div>
 
           <div class="popup-content">
-            <!-- 换装内容 -->
-            <tabs :animated="false">
-
+            <tabs :animated="false" @on-click="tabsClick">
+              <!-- 装扮套装 -->
               <tab-pane label icon="ios-body">
                 <ul class="opt-list">
                   <li
                     v-for="suit in suits"
                     :key="suit.name"
-                    :class="['opt-btn', { active: chick.currentSuit === suit.id && chick.currentHat === suit.id && chick.currentClothes === suit.id}]"
+                    :class="['opt-btn', { active: chick.currentSuit === suit.id }]"
                     @click="replaceDress(0,suit.id)"
                   >
                     <span class="opt-mask fadeIn animated">
@@ -211,6 +253,7 @@
                 </ul>
               </tab-pane>
 
+              <!-- 装扮帽子 -->
               <tab-pane label icon="ios-school">
                 <ul class="opt-list">
                   <li
@@ -227,12 +270,13 @@
                 </ul>
               </tab-pane>
 
+              <!-- 装扮衣服 -->
               <tab-pane label icon="ios-shirt">
                 <ul class="opt-list">
                   <li
                     v-for="clothe in clothes"
                     :key="clothe.name"
-                    :class="['opt-btn', { active: chick.currentClothes === clothe.id}]"
+                    :class="['opt-btn', {active: chick.currentClothes === clothe.id}]"
                     @click="replaceDress(2,clothe.id)"
                   >
                     <span class="opt-mask fadeIn animated">
@@ -242,11 +286,14 @@
                   </li>
                 </ul>
               </tab-pane>
+
+              <!-- 装扮宠物 -->
               <!-- <Icon type="logo-octocat" /> -->
               <tab-pane label icon="logo-octocat">
                 <p style="padding-top: 40px; text-align: center;">宠物开发中...</p>
               </tab-pane>
 
+              <!-- 装扮眼睛 -->
               <tab-pane label icon="md-glasses">
                 <p style="padding-top: 40px; text-align: center;">眼睛饰品开发中...</p>
               </tab-pane>
@@ -256,6 +303,8 @@
 
         </div>
 
+
+        <!-- 装扮商店 -->
         <div class="popup-item" v-show="isShop">
           <div class="popup-head border-bottom-1px">
             <span class="popup-title fl">商店</span>
@@ -265,17 +314,26 @@
             <p style="padding-top: 50px; text-align: center;">商店功能开发中...</p>
           </div>
         </div>
+
         <!-----背包开始----->
         <div class="popup-item" v-show="isBag">
+
           <div class="popup-head border-bottom-1px">
             <span class="popup-title fl">背包</span>
             <i class="ivu-icon ivu-icon-md-close-circle" @click="hidePopup"></i>
           </div>
+
           <div class="popup-content">
+
             <tabs :animated="false">
+
+              <!-- 道具 -->
               <tab-pane label="道具" icon="md-ice-cream">
+
                 <div class="food-box">
+
                   <ul class="food-list">
+
                     <li
                       v-for="(food, index) in foods"
                       @click="showFood(index)"
@@ -283,11 +341,14 @@
                       :key="index"
                     >
                       <div class="food-item">
+
                         <div class="food-img">
                           <img :src="food.url" />
                         </div>
+
                         <p class="food-name">{{food.name}}</p>
                         <span class="food-num" v-if="food.num !== 0">{{food.num}}</span>
+
                         <div
                           class="mask-bg shortage-tips"
                           @click.stop="showShop(food.name)"
@@ -295,18 +356,26 @@
                         >
                           <i-button :size="buttonSize" type="success">购买</i-button>
                         </div>
+
+
                         <div
                           class="mask-bg shortage-tips"
                           v-if="food.unlock == 0"
                           @click.stop="showUnlock(food.name)"
                         >
                           <i-button :size="buttonSize" type="warning">解锁</i-button>
+
                         </div>
                       </div>
+
                     </li>
                   </ul>
+
                 </div>
+
               </tab-pane>
+
+              <!-- 收成 -->
               <tab-pane label="收成" icon="ios-archive">
                 <div class="food-box">
                   <ul class="food-list">
@@ -328,10 +397,16 @@
                   <div class="no-data" v-show="goods.length == 0">暂无物品</div>
                 </div>
               </tab-pane>
+
             </tabs>
+
           </div>
         </div>
         <!-----背包结束----->
+
+
+
+
 
         <!-----闯关开始---->
         <div class="popup-item" v-show="isStudy">
@@ -341,7 +416,9 @@
           </div>
 
           <div class="popup-content">
+
             <tabs :animated="false">
+
               <tab-pane
                 v-for="(subject, index1) in subjectList"
                 :label="subject.type"
@@ -371,11 +448,16 @@
                 </ul>
 
               </tab-pane>
+
             </tabs>
+
             <p style="padding-top: 50px; text-align: center; display: none;">学习功能开发中...</p>
+
           </div>
+
         </div>
         <!-----闯关结束---->
+
       </div>
 
 
@@ -404,9 +486,7 @@
 
       <!-- 用户登录 -->
       <Modal v-model="modalLogin" class-name="hide-footer" :mask-closable="false" :closable="false" @on-ok="keepUser">
-
         <user-login v-model="modalLogin" @getVisitor="hideLogin"></user-login>
-
       </Modal>
 
       <!-- 用户年级学期选择 -->
@@ -416,7 +496,6 @@
         <user-grade v-model="modalGrade"></user-grade>
         
       </Modal>
-
 
       <!-- 用户信息 -->
       <Modal v-model="modalUser" class-name="hide-footer" @on-ok="keepUser" @on-cancel="hideUser">
@@ -645,15 +724,19 @@ import CHouse from "@/components/Chouse";
 import CLeaf from "@/components/CLeaf";
 import CPeak from "@/components/CPeak";
 import CSubject from "@/components/CSubject";
-import HatDefault from "@/components/HatDefault";
-import ClothesDefault from "@/components/ClothesDefault";
 
-import HatForg from "@/components/HatForg";
-import ClothesForg from "@/components/ClothesForg";
+import HatDefault from "@/components/HatDefault";  //帽子默认组件
+import ClothesDefault from "@/components/ClothesDefault"; //衣服默认组件
+import SuitDefault from "@/components/SuitDefault"; //套装默认组件
+import SuitSuper from "@/components/SuitSuper" //超人组件
+
+import HatForg from "@/components/HatForg"; //蘑菇帽子
+import ClothesForg from "@/components/ClothesForg"; //青蛙衣服 暂时没有设计
+import SuitForg from "@/components/SuitForg"; //青蛙套装
+
 import screenfull from "screenfull";
-
-import UserLogin from "@/views/user";
-import UserGrade from "@/components/UGrade";
+import UserLogin from "@/views/user"; //用户登录注册组件
+import UserGrade from "@/components/UGrade"; //用户年级和学期选择组件
 
 import {UpdateUserInfo} from '@/api/user'; //用户的 级别和 金币接口
 
@@ -709,7 +792,7 @@ export default {
         },
         {
           id: "forg",
-          name: "青蛙帽子"
+          name: "蘑菇帽子"
         }
       ],
       suits: [
@@ -721,6 +804,10 @@ export default {
         {
           id: "forg",
           name: "青蛙套装"
+        },
+        {
+          id:'super',
+          name:"超人套装"
         }
       ],
       // 全屏/不全屏
@@ -729,29 +816,43 @@ export default {
       percent: 0, // 加载进度
       showPress: true,
       modalGrade:false,
-      modalVistor:false
+      modalVistor:false,
+      swiperContent:[
+        {text:'我是小蒜头，欢迎来闯关'},
+        {text:'加油哦'},
+        {text:'你可以的'},
+        {text:'可以升级等级和金币哦'},
+        {text:'去装饰自己吧'},
+        {text:'啦啦啦啦'},
+
+      ],
+      randomText:''
     };
   },
+
   beforeCreate () {
     if (window.performance.navigation.type == 1) {
       console.log("页面被刷新");
+
       //判断用户是否登录
       let data = JSON.parse(localStorage.getItem('farmDate'));
-      if(data.user.uid && data.user.uid!=='游客登录'){
-        console.log('用户已经登录')
+      if(data.user.uid){
+        console.log('用户已经登录');
       }else{
         console.log('用户还没登录');
-        if(data.user.uid !== '游客登录'){
-          window.localStorage.clear();
-        }else{
+        
+        if(data.user.uid == -1){
           console.log('游客登录')
+        }else{
+          window.localStorage.clear();
         }
       }
     }else{
-      console.log("首次被加载")
+      console.log("首次被加载");
       window.localStorage.clear();
     }
   },
+
   created () {
 
     //判断用户是否登录
@@ -784,57 +885,83 @@ export default {
     HatForg,
     ClothesForg,
     UserLogin,
-    UserGrade
+    UserGrade,
+    SuitDefault,
+    SuitForg,
+    SuitSuper
   },
+
   computed: {
+   
     // 计算已完成成就的数量
     targetList() {
       //let target = this.$store.state.achievement.filter(obj => obj.complete);
       //console.log("完成成就target:" + target);
       //return target.length;
     },
+
+    //用户
     user() {
       return this.$store.state.user;
     },
+
+    //蒜瓣
     chick() {
       return this.$store.state.chick;
     },
+
+    //背包里的食物
     foods() {
       return this.$store.state.foods;
     },
+
+    //收成
     goods() {
       return this.$store.state.goods;
     },
+
+    //闯关题目
     subjectList() {
       return this.$store.state.subjectList;
     },
-    eat() {
-      return this.$store.state.eat;
-    },
+
     setTime() {
       return this.$store.state.setTime;
     },
+
     startDate() {
       return this.$store.state.startDate;
     },
     endDate() {
       return this.$store.state.endDate;
     },
+
+    //倒计时
     content() {
       return this.$store.state.content;
     },
+
+    //当前选中的食物
     currFood() {
       return this.$store.state.currFood;
     },
+
+    //当前收获的物品
     currGood() {
       return this.$store.state.currGood;
     },
+
+    //解锁成就
     achievement() {
       return this.$store.state.achievement;
     },
+
+    //蒜瓣等级
     modalLevel() {
       return this.$store.state.modalLevel;
     },
+
+    //进食进度条
     value() {
       return this.$store.state.value;
     }
@@ -843,9 +970,11 @@ export default {
   mounted() {
     
     this.init(); // 初始化
-    
+   
+    this.goText(); //文字随机播放
   },
   watch: {
+    // 监听用户登录 年级学期和游客登录切换监控
     modalLogin(newname,oldname){
       // console.log(newname,oldname)
       if(oldname && !this.modalVistor){
@@ -857,6 +986,19 @@ export default {
     }
   },
   methods: {
+    //文字随机
+    goText(){
+      let index = 0;
+      let timer = setInterval(()=>{
+        if(index == this.swiperContent.length-1){
+          index = 0;
+        }else{
+          index++;
+        }
+        this.randomText = this.swiperContent[index].text
+      },2000)
+    },
+
     // 初始化
     init() {
       this.$nextTick(function() {
@@ -890,13 +1032,16 @@ export default {
       });
 
     },
+
     isNewDay: function(time) {},
+    
     // 判断是否正在进食
     chickIsEat: function() {
       // 页面加载获取当前时间
       let loadDate = new Date().getTime();
       // 判断上一次是否进食结束
       let isEat = this.$store.state.endDate - loadDate;
+
       // console.log('判断是否在进食.....',isEat)
       if (isEat > 0) {
         this.$store.state.chick.eat = true;
@@ -907,13 +1052,17 @@ export default {
         return;
       }
     },
+
+
     hideFood: function() {
       this.modalFood = !this.modalFood;
     },
+
     showFood: function(index) {
       this.modalFood = !this.modalFood;
       this.$store.state.currFood = this.$store.state.foods[index];
     },
+
     // 点击食物进行喂食
     feedClick: function() {
       // 判断是否在进食
@@ -932,6 +1081,7 @@ export default {
       this.hidePopup();
       this.success("喂食成功");
     },
+
     // 喂食倒计时方法
     countdown(startdate) {
       let self = this;
@@ -984,29 +1134,37 @@ export default {
         }, 1000);
       }
     },
+
     showShop: function(name) {
       this.$store.commit("shopFood", name);
       this.modalShop = true;
     },
+
     hideShop: function() {
       this.modalShop = false;
     },
+
     shopReduce: function() {
       this.shoppingNum--;
     },
+
     shopAdd: function() {
       this.shoppingNum++;
     },
+
     showGood: function(name) {
       this.$store.dispatch("shopGood", name);
       this.modalGood = true;
     },
+
     hideGood: function() {
       this.modalGood = false;
     },
+
     setSell: function() {
       this.goodDetails = !this.goodDetails;
     },
+
     sellAdd: function() {
       if (this.sellNum == this.$store.state.currGood.num) {
         this.error("不能再加了");
@@ -1015,6 +1173,7 @@ export default {
         this.sellNum++;
       }
     },
+
     sellReduce: function() {
       if (this.sellNum == 1) {
         this.error("不能再减了");
@@ -1023,6 +1182,7 @@ export default {
         this.sellNum--;
       }
     },
+
     commitSell: function() {
       this.goodDetails = !this.goodDetails;
       //var price = this.$store.state.currGood.price*this.selNum;
@@ -1035,13 +1195,16 @@ export default {
       this.$store.dispatch("sellgood", this.sellNum);
       this.modalGood = false;
     },
+
     showUnlock: function(name) {
       this.$store.commit("shopFood", name);
       this.modalUnlock = true;
     },
+
     hideUnlock: function() {
       this.modalUnlock = false;
     },
+
     commitUnlock: function() {
       var food = this.$store.state.currFood.name;
       var unlockPrice = this.$store.state.currFood.unlockPrice;
@@ -1056,22 +1219,28 @@ export default {
       }
       this.hideUnlock();
     },
+
     showAchievement: function() {
       this.modalAchievement = true;
     },
+
     hideAchievement: function() {
       this.modalAchievement = false;
     },
+
     showHelp: function() {
       this.modalHelp = true;
     },
+
     hideHelp: function() {
       this.modalHelp = false;
     },
+
     // 领取成就奖励
     receiveAwards: function(val) {
       this.$store.dispatch("receiveawards", val);
     },
+
     // 点击闯关  参数是 (关卡，科目Index)
     onSubject: function(val, pid) {
       this.$store.state.currSubject = val;   // 设置当前管卡
@@ -1087,11 +1256,11 @@ export default {
       }
       //console.log(this.$store.state.currSubject);
     },
+
     // 关闭题目界面
     hideSubject: function(val) {
       this.isSubject = val;
     },
-
 
     // 打开功能菜单弹窗
     showPopup: function(val) {
@@ -1107,7 +1276,6 @@ export default {
       }
     },
 
-
     // 关闭功能菜单弹窗
     hidePopup: function() {
       this.skinBox = false;
@@ -1119,13 +1287,16 @@ export default {
         that.isStudy = false;
       }, 400);
     },
+
     // 打开用户信息面板
     showUser: function() {
       this.modalUser = true;
     },
+
     editUser: function() {
       this.editUserName = !this.editUserName;
     },
+
     saveUser: function() {
       if (this.newUserName == "") {
         console.log("请输入用户名称");
@@ -1138,13 +1309,17 @@ export default {
         //this.$store.dispatch('savegame');
       }
     },
+
+
     // 设置服装
     replaceDress: function(type, pid) {
       this.$store.dispatch("replacedress", { type: type, pid: pid });
     },
+
     keepUser: function() {
       this.$store.dispatch("keepuser");
     },
+
     // 升级弹窗确认按钮，确认后再检测是否可以继续升级
     levelUser: function() {
       var self = this;
@@ -1153,6 +1328,8 @@ export default {
         self.$store.dispatch("settlelevel", self.$store.state.chick.exp);
       }, 500);
     },
+
+
     shopSettle: function() {
       var num = this.shoppingNum;
       var name = this.$store.state.currFood.name;
@@ -1175,25 +1352,41 @@ export default {
       this.hideShop();
       this.shoppingNum = 0;
     },
+
+
     // 公共成功提示
     success: function(val) {
       this.$Message.success(val);
     },
+
     // 公共失败提示
     error: function(val) {
       this.$Message.error(val);
     },
+
     showGrade(){
       this.modalGrade = true;
     },
+
     hideUser(){
       this.editUserName = false;
     },
+
     hideLogin(){
       console.log('游客登录')
       this.modalLogin = false; 
       this.modalVistor = true;
+    },
+
+
+    //换装
+    tabsClick(name){
+      // console.log(name,'换装。。。');
+      this.chick.currentSuit = '';
+      this.chick.currentHat = '';
+      this.chick.currentClothes = ''
     }
+
   },
 
   // 过滤器
@@ -1271,6 +1464,8 @@ export default {
       }
       return time;
     }
+
   }
+
 };
 </script>

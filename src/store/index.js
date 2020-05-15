@@ -23,7 +23,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
     state: {
         user: {
-            uid: null,       //用户ID
+            uid: 0,       //用户ID
             gradeId:0,    //用户年级ID
             termId: 0,    // 用户年级学期ID
             firstGame: 0, // 
@@ -41,10 +41,13 @@ const store = new Vuex.Store({
             level: 1,       // 等级
             eat: false,     // 是否在进食
             setTime: 300,   // 喂食时长 300s
-            currentSuit: 'default', // 当前套装
-            currentHat: 'default',    // 当前帽子
-            currentClothes: 'default',  // 当前衣服
+            currentPlay:'',  //当前装扮
+            currentCompId:0, //当前组件索引
+            currentSuit: '',  // 当前套装
+            currentHat: '',    // 当前帽子
+            currentClothes: '',  // 当前衣服
 
+            componentSuit:'suit-default', //默认套装组件
             componentHat: 'hat-default', // 默认帽子组件
             componentClothes: 'clothes-default', // 默认衣服组件
             // 鸡蛋
@@ -220,6 +223,7 @@ const store = new Vuex.Store({
                 this.commit('SAVE_GAME');
             }
         },
+        
         // 收获物品
         HARVEST_EGG(state, good) {
             console.log(good);
@@ -239,6 +243,7 @@ const store = new Vuex.Store({
                 })
             }
         },
+
         // 设置新用户名称
         SET_USER_NAME(state, val) {
             state.user.name = val;
@@ -247,14 +252,11 @@ const store = new Vuex.Store({
         
         // 设置服装
         REPLACE_DRESS(state, price) {
+            state.chick.currentCompId = price.type;
+            state.chick.currentPlay = price.type+price.pid;
             if (price.type == 0) {
-                console.log('zzzz',state.chick)
                 state.chick.currentSuit = price.pid;
-                state.chick.currentClothes = price.pid;
-                state.chick.currentHat = price.pid;
-
-                state.chick.componentHat = 'hat-' + price.pid;
-                state.chick.componentClothes = 'clothes-' + price.pid;
+                state.chick.componentSuit = 'suit-' + price.pid
 
             } else if (price.type == 1) {
                 state.chick.currentHat = price.pid;
@@ -264,6 +266,7 @@ const store = new Vuex.Store({
                 state.chick.componentClothes = 'clothes-' + price.pid;
             }
         },
+
         // 获得成就方法
         checkAchievemnt(state, id) {
             // 寻找目标一致且未完成的成就
@@ -285,6 +288,7 @@ const store = new Vuex.Store({
                 }
             })
         },
+
         RECIVE_AWARDS(state, val) {
             state.achievement.forEach(obj => {
                 if (obj.title === val) {
@@ -296,6 +300,7 @@ const store = new Vuex.Store({
                 }
             })
         },
+
         // 开启闯关
         START_SUBJECT(state, val) {
             console.log('开启激活....',val)

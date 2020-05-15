@@ -33,7 +33,14 @@ export default {
     },
     methods: {
         handleBtmClick(e) {
-            // console.log("点击....",this.$parent,this.$parent.$refs,e,e.currentTarget);
+            if(this.$parent.$refs['btn_out1']){
+                this.setOtherBtnDisable('btn_out1');
+            }
+
+            if(this.$parent.$refs['btn_out2']){
+                this.setOtherBtnDisable('btn_out2');
+            }
+
             this.isAble = true;
             var submit = e.currentTarget;
             var result = false;
@@ -57,11 +64,52 @@ export default {
                 self.checkmark = false;
                 self.$emit("outBtnClick", result);
                 self.isAble = false;
+
             }, 500);
 
-            
-            
-        }
+            setTimeout(()=>{
+                //取消其他按钮不可用
+                if(self.$parent.$refs['btn_out1']){
+                    self.cancelDisable('btn_out1');
+                }
+                if(self.$parent.$refs['btn_out2']){
+                    self.cancelDisable('btn_out2');
+                }
+            },1000)
+        },
+
+        //通过类名查找某元素的特定元素 返回一组元素
+       getByClass(oParent, sClass){
+            var aResult=[];
+            var aEle=oParent.getElementsByTagName('*');
+            for(var i=0;i<aEle.length;i++){
+                if(aEle[i].className==sClass)
+                {
+                    aResult.push(aEle[i]);
+                }
+            }
+            return aResult;
+       },
+
+        //设置按钮不可用
+       setOtherBtnDisable(name){
+            let oUl = this.$parent.$refs[name];
+            let oBtn = this.getByClass(oUl,'submit');
+            for(var i=0;i<oBtn.length;i++){
+                oBtn[i].disabled = true;
+            }
+       },
+
+        //设置按钮可用
+       cancelDisable(name){
+            let oUl = this.$parent.$refs[name];
+            let oBtn = this.getByClass(oUl,'submit');
+            for(var i=0;i<oBtn.length;i++){
+                oBtn[i].disabled = false;
+            }
+       }
+
+
     }
 };
 </script>

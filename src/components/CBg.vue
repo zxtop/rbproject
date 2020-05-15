@@ -1,6 +1,4 @@
 <template>
-<!-- :style="{backgroundImage: 'url(' +require('../assets/images/bg1.png')+ ')', backgroundSize:'100% 100%', backgroundRepeat: 'no-repeat'}" -->
-
     <div class="subject_bg" >
         <!-- <p>背景图片随机展示</p> -->
         <img :src="random">
@@ -24,12 +22,11 @@ export default {
     },
     computed: {
         random(){
-            // console.log(this.baseImg[Math.floor(Math.random() * this.baseImg.length + 1)-1].img)
             return this.baseImg[Math.floor(Math.random() * this.baseImg.length + 1)-1].img
         }
     },
     created () {
-        console.log(this.random)
+        // console.log(this.random)
     }
 }
 </script>

@@ -227,9 +227,8 @@ import {regUser} from '@/api/user';
                 this.handleReset('regValidate');
             },
             handleVisitor(){
-                let str = '游客登录'
                 this.$emit('getVisitor');
-                this.$store.dispatch('saveuserId',str)
+                this.$store.dispatch('saveuserId',-1)
             }
             
         }

@@ -496,15 +496,17 @@
 .chick>div{ position: absolute; }
 .chick-body{
   position: absolute;
-  top: 0;
-  left: 0;
+  /* top: 0;
+  left: 0; */
+  top:57px;
+  left: 3px;
   bottom: 0;
   right: 0;
   display: block;
-  width: 7.6rem;
-  height: 100%;
-  background-color: #f2e3cb;
-  background: url(../images/st.png);
+  width: 90%;
+  height: 87%;
+  /* background-color: #f2e3cb; */
+  /* background: url(../images/st.png); */
     -moz-background-size: 100% 100%;
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -526,6 +528,8 @@
   animation:chickbody-before 1.5s ease-in infinite;*/
 
 }
+
+
 .eye{
   top: 8.5rem;
   left: 1.3rem;
@@ -2763,10 +2767,10 @@ top: 10px;
 .countdown-box {
 	position: absolute;
 	top: 3rem;
-    width: 130%;
-    text-align: center;
-    z-index: 99;
-    left: 4.5rem;
+  width: 130%;
+  text-align: center;
+  z-index: 99;
+  left: 4.5rem;
 }
 .countdown-text {
   position: relative;
@@ -2793,6 +2797,9 @@ top: 10px;
 .countdown-text.active:before {
   display: block;
 }
+
+
+
 .progress {
     width: 100%;
     height: 4px;
@@ -3611,3 +3618,37 @@ animation-delay: .6s;
 }
 
 .user_visitor{text-align: center;}
+.question_content{
+  height: auto;
+  max-height: 280px;
+  overflow-y: scroll;
+}
+
+.chick-swiper{background: rgb(250, 222, 61,0.8);padding: 5px;border-radius: 10px;z-index: 9;
+  text-align: center;border: 2px solid #ff8800;
+  /* opacity: 1; */
+  width: 100%;
+  top: 30px;
+  animation: textPopUp 1s linear;
+}
+.chick-swiper span{color: #000;font-size: 12px;text-align: center;}
+
+@keyframes textPopUp{
+  0%{opacity: 0;transform: translate(0px,50px);}
+  50%{opacity: 0.5;transform: translate(0px,40px);}
+  100%{opacity: 1;transform: translate(0px,30px);}
+}
+
+.eye_hat span:after{
+  left: 0rem;
+  top:-0.3rem;
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.eye_super span:after{
+  left: 0rem;
+  top:-0.3rem;
+  width: 0.5rem;
+  height: 0.5rem;
+}

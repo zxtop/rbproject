@@ -36,7 +36,7 @@
 
                 <!-- 判断题 -->
                 <div class="select_judge" v-if="questionForm.type && questionForm.type.name =='判断题'">
-                    <ul ref="btn_out1">
+                    <ul ref="btn_out1" id="btn_out1">
                         <li class="btn">
                             <c-btn1 @inClick="getClick" :zimuText="html_yes_iocn" :option="html_yes_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
                         </li>
@@ -44,7 +44,7 @@
                         <li class="btn">
                             <c-btn1 @inClick="getClick" :zimuText="html_no_iocn" :option="html_no_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
                         </li>
-
+                        
                     </ul>
                 </div>
 
@@ -53,7 +53,7 @@
                     class="select_option"
                     v-if="questionForm.type && questionForm.type.name != '判断题'"
                 >
-                    <ul ref="btn_out2">
+                    <ul ref="btn_out2" id="btn_out2">
                         <li class="btn">
                             <c-btn1 @inClick="getClick" :zimuText="html_a_iocn" :option="html_a_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
                         </li>
@@ -138,8 +138,7 @@ export default {
             fail: false,    //挑战失败
             success: false,   //挑战成功
             dt_img:'../static/images/dt.png',
-            currentClick:false,
-            num:0
+            num:0 //计算按钮点击次数
 
         };
     },
@@ -159,7 +158,7 @@ export default {
         this.params.type_ids = this.question_types_xx; //默认赋值小学
         this.uid = this.$store.state.user.uid;
         //this.u_name = this.$store.getters.user_name;
-        console.log('当前激活的关卡：' + this.$store.state.currSubject,this.$store.state.currSubject.difficulty);
+        console.log('当前激活的关卡：' + this.$store.state.currSubject);
 
         // 判断如果有激活的关卡则加载试题
         if (this.$store.state.currSubject.difficulty) {
@@ -229,6 +228,7 @@ export default {
             this.questionForm = this.questionslist[0];
             this.question_index = 0;
         },
+
         outanwserCilck(re){
             console.log('回答的正确吗？',re);
             if(re){
@@ -239,13 +239,14 @@ export default {
             // this.nextQuestion();
         },
 
+        // 跳转下一题
         getClick(val){
             this.num++;
-            // console.log('dayinnnn',val,this.num)
             if(val && this.num == 1){
                 setTimeout(this.nextQuestion, 1000);
             }
         },
+
         //更新用户的成绩
         updataUserData() {            
             // if (this.u_yes_num == 10) {

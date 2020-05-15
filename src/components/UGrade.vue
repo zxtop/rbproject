@@ -17,7 +17,6 @@
             <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
             <!-- <Button @click="handleReset('formValidate')" style="margin-left: 8px">Reset</Button> -->
         </form-item>
-
     </i-form>
     
 </template>
