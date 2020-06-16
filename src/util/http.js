@@ -106,8 +106,6 @@ export default {
     )
   },
 
-
-
   post_by_token (url, data,token) {
     return axios({
       method: 'post',
@@ -215,4 +213,5 @@ export default {
       }
     )
   }
+
 }

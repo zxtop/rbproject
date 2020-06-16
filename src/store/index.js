@@ -25,7 +25,7 @@ const store = new Vuex.Store({
         user: {
             uid: 0,       //用户ID
             gradeId:0,    //用户年级ID
-            termId: 0,    // 用户年级学期ID
+            termId: 0,    //用户年级学期ID
             firstGame: 0, // 
             name: '闯关小英雄',
             money: 3000,    
@@ -73,6 +73,7 @@ const store = new Vuex.Store({
         currFood: {},     // 当前选中的食物
         currGood: {},     // 当前收获的物品
         currSubject: {},  // 当前管卡
+        currSubjectId:0,  //当前学科
         currAchievement: {},     // 当前领取的成就
         modalLevel: false,
         // 进度条
@@ -82,6 +83,26 @@ const store = new Vuex.Store({
         currNickName:'' //当前用户昵称
     },
     mutations: {
+        //获取收成
+        GET_GOOD(state,val){
+            if(state.goods.length){
+                if(state.goods.indexOf(val)!==-1){ //包含
+                    state.goods[state.goods.indexOf(val)].num++
+                }else{
+                    val.num = 1;
+                    state.goods.push(val);
+                }
+            }else{
+                val.num = 1;
+                state.goods.push(val);
+            }
+            // console.log('获取收成。。。',state.goods)
+        },
+        //每道题金币更新
+        SET_GOLD(state,val){
+            state.user.money = val.goldCount;
+            state.chick.level = val.level;
+        },
         //登录后设置用户id和name
         LOGIN_ID_NAME(state,val){
             state.currId = val.id;
@@ -273,7 +294,7 @@ const store = new Vuex.Store({
             let targetList = state.achievement.filter(obj => obj.completeTypeId === id && !obj.complete);
             console.log(targetList,'dddd');
             // 寻找目标植物
-            //let targetPlant = state.plants.find(obj => obj.id === id);
+            // let targetPlant = state.plants.find(obj => obj.id === id);
             // 执行目标的奖励方式
             targetList.forEach(obj => {
                 if (obj.completeCurrCount < obj.completeNeedCount) {
@@ -323,7 +344,7 @@ const store = new Vuex.Store({
                 }
             });
 
-            //console.log(pIndex)
+            // console.log('pIndex.....',pIndex)
             if (pIndex > 0) {
                 var prveItem = state.subjectList[val].list[pIndex - 1].learning;
                 if (prveItem == 2) {
@@ -339,6 +360,7 @@ const store = new Vuex.Store({
                 Vue.prototype.$popUp('激活关卡', state.currSubject.name);
             }
         },
+
         // 闯关成功， 激活新关卡
         ACTIVE_NEWLEVE(state, val) {
             // 当前关卡的名字
@@ -346,16 +368,21 @@ const store = new Vuex.Store({
             // 设置当前关卡为已通过
             if(state.currSubject.learning ===1){
                 state.currSubject.learning = 2;
-            //当前 关卡的 Index
+                //当前 关卡的 Index
                 var pIndex = ''
                 state.subjectList[val].list.forEach((obj, index) => {
                     if (obj.name == name) {
                         pIndex = index;                  
                     }
                 });
-                state.currSubject = state.subjectList[val].list[pIndex + 1];
-                state.currSubject.learning = 1;
-                Vue.prototype.$popUp('激活关卡', state.currSubject.name);  
+                if(pIndex<state.subjectList[val].list.length -1){
+                    state.currSubject = state.subjectList[val].list[pIndex + 1];
+                    state.currSubject.learning = 1;
+                    Vue.prototype.$popUp('激活关卡', state.currSubject.name);
+                }else{
+                    console.log('最后一题。。。。')
+                    return   
+                }
             }          
         },
 
@@ -375,6 +402,7 @@ const store = new Vuex.Store({
                 currFood: state.currFood,
                 currGood: state.currGood,
                 currSubject: state.currSubject,
+                currSubjectId:state.currSubjectId,
                 chick: state.chick,
                 user: state.user,
                 foods: state.foods,
@@ -390,6 +418,7 @@ const store = new Vuex.Store({
                 level:data.chick.level,
                 goldCount:data.user.money
             }
+            // console.log(user_data,"cunnnnnnn")
 
             UpdateUserInfo(user_data)
             .then(response=>{
@@ -420,6 +449,7 @@ const store = new Vuex.Store({
                 state.currFood = data.currFood,
                 state.currGood = data.currGood,
                 state.currSubject = data.currSubject,
+                state.currSubjectId = data.currSubjectId,
                 state.chick = data.chick,
                 state.user = data.user,
                 state.foods = data.foods,
@@ -434,7 +464,7 @@ const store = new Vuex.Store({
         //更改uid
         SAVE_UID:(state,uid)=>{
             state.user.uid = uid;
-            console.log(state.user.uid)
+            console.log("uid......",state.user.uid)
         }
     },
     actions: {

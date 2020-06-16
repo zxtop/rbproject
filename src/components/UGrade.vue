@@ -22,7 +22,7 @@
 </template>
 <script>
 import stateGradeSemester from '@/store/datajs/stateGradeSemester';
-import {SetUserGradeTemId} from '@/api/user';
+import {SetUserGradeTemId,getUserLevel} from '@/api/user';
     export default {
         data () {
             const validatePass = (rule, value, callback) => {
@@ -126,6 +126,7 @@ import {SetUserGradeTemId} from '@/api/user';
                     if (valid) {
                         console.log('this.fromValidate.....',this.formValidate)
                         this.$Message.success('提交成功!');
+
                         //提交成功后提交用户信息
                         let obj = {
                             currId:this.$store.state.currId,
@@ -133,18 +134,39 @@ import {SetUserGradeTemId} from '@/api/user';
                             gradeId:this.formValidate.gradeId,
                             termId:this.formValidate.termId
                         }
-                        // console.log(obj,'dddd')
-                        this.$store.dispatch('setusergrade',obj);
 
                         let objId = {
                             userId:this.$store.state.currId,
                             termId:this.formValidate.termId,
                             gradeId:this.formValidate.gradeId
                         }
+                        
+
                         //更改用户信息
                         SetUserGradeTemId(objId)
                         .then(response=>{
                             console.log(response.data)
+                            if(response.data.result == 'true'){
+                                getUserLevel(this.$store.state.currId).then(res => {
+                                    console.log(res,'dddddd');
+                                    let studentInfo = {
+                                        studentId: this.$store.state.currId,
+                                        level: res.data.student.level,
+                                        goldCount: res.data.student.gold_count
+                                    };
+                                    this.$store.commit("SET_GOLD",studentInfo);
+                                    this.$store.dispatch('setusergrade',obj);
+                                });
+                            }else{
+                                //游客登录
+                                let studentInfo = {
+                                    studentId: this.$store.state.currId,
+                                    level: 1,
+                                    goldCount: 3000
+                                };
+                                this.$store.commit("SET_GOLD",studentInfo);
+                                this.$store.dispatch('setusergrade',obj);
+                            }
                         });
 
                         //提交后返回主页面

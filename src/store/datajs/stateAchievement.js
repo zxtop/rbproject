@@ -19,9 +19,9 @@ function popUp(title, val) {
 module.exports = {
     'achievements': [{
         id: 1,
-        title: '勇敢小蒜瓣',    // 勋章名称
-        desc: '第一次闯关',      // 描述
-        profit: '500',    // 奖励
+        title: '勇敢小蒜瓣',        // 勋章名称
+        desc: '第一次闯关',        // 描述
+        profit: '500',            // 奖励
         complete: false,          // 是否完成
         completeID: 0,            // 未完成0，已完成1
         completeTypeId: 1,        // 成就类别，1=闯关次数；2=获得金币数；3=解锁粮食数

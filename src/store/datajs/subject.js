@@ -14,7 +14,8 @@ module.exports = {
                 "2": 1,
                 "3": 0
             }
-        }, {
+        }
+        , {
             id: 10012,
             name: '知识理解',
             img: '../static/images/subject/BA2.jpg',
@@ -24,7 +25,8 @@ module.exports = {
                 "2": 5,
                 "3": 0
             }
-        }, {
+        }
+        , {
             id: 10021,
             name: '知识掌握',
             img: '../static/images/subject/BB1.jpg',
@@ -74,7 +76,10 @@ module.exports = {
                 "2": 1,
                 "3": 9
             }
-        }]
+        }
+    
+    
+    ]
     },
     {
         id: 2,

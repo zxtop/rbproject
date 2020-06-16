@@ -62,8 +62,8 @@ export function login(data) {
     return http.get(url,params)
   }
 
-   //更改用户信息
-   export function SetUserGradeTemId(data){
+  //更改用户信息
+  export function SetUserGradeTemId(data){
     const url = Global.myURL+'api/systemconfig/student/update_student_info'
     return http.post(url,data)
   }

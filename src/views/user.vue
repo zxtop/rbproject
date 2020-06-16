@@ -176,8 +176,9 @@ import {regUser} from '@/api/user';
                                     this.$emit('input',this.message);
                                     this.$Message.success('登录成功');
                                     //返回登录信息----记录用户名字和用户id
-                                    // console.log(value.data.user);
+
                                     this.$store.commit('LOGIN_ID_NAME',value.data.user);
+
                                     //年级 学期选择
                                     
                                     //存储用户设置

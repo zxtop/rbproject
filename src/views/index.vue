@@ -34,12 +34,12 @@
           <span class="nav-name">装扮</span>
         </li>
 
-        <li @click="showPopup(shop)">
+        <!-- <li @click="showPopup(shop)">
           <span class="nav-icon">
             <i class="ivu-icon ivu-icon-ios-cart"></i>
           </span>
           <span class="nav-name">商店</span>
-        </li>
+        </li> -->
 
         <li @click="showPopup(bag)">
           <span class="nav-icon">
@@ -56,12 +56,13 @@
         </li>
 
         <li @click="showPopup(study)" class="n-green">
+
           <span class="nav-icon">
             <i class="ivu-icon ivu-icon-ios-game-controller-b"></i>
           </span>
+
           <span class="nav-name">闯关</span>
         </li>
-
 
       </ul>
 
@@ -305,7 +306,7 @@
 
 
         <!-- 装扮商店 -->
-        <div class="popup-item" v-show="isShop">
+        <!-- <div class="popup-item" v-show="isShop">
           <div class="popup-head border-bottom-1px">
             <span class="popup-title fl">商店</span>
             <i class="ivu-icon ivu-icon-md-close-circle" @click="hidePopup"></i>
@@ -313,7 +314,7 @@
           <div class="popup-content">
             <p style="padding-top: 50px; text-align: center;">商店功能开发中...</p>
           </div>
-        </div>
+        </div> -->
 
         <!-----背包开始----->
         <div class="popup-item" v-show="isBag">
@@ -387,7 +388,7 @@
                     >
                       <div class="food-item">
                         <div class="food-img egg-img">
-                          <img :src="good.img" />
+                          <img :src="good.url" />
                         </div>
                         <p class="food-name">{{good.name}}</p>
                         <span class="food-num">{{good.num}}</span>
@@ -457,7 +458,6 @@
 
         </div>
         <!-----闯关结束---->
-
       </div>
 
 
@@ -491,16 +491,12 @@
 
       <!-- 用户年级学期选择 -->
       <Modal v-model="modalGrade" class-name="hide-footer" :mask-closable="false" :closable="false" @on-ok="keepUser">
-
         <p style="text-align:center;margin-bottom:20px">年级|学期</p>
         <user-grade v-model="modalGrade"></user-grade>
-        
       </Modal>
 
       <!-- 用户信息 -->
       <Modal v-model="modalUser" class-name="hide-footer" @on-ok="keepUser" @on-cancel="hideUser">
-        
-
         <div class="user-form" v-if="!editUserName">
           <!-- 年级选择按钮 -->
           <div class="user-grade">
@@ -650,32 +646,44 @@
 
       <!-- 勋章列表 -->
       <Modal v-model="modalAchievement" class-name="hide-footer" @on-cancel="hideAchievement">
+
         <p style="margin-bottom: 10px;">
           成就数量：
           <span>{{targetList}}</span>
           /{{achievement.length}}
         </p>
+
         <ul class="a-list">
+
           <li
             v-for="(item, index) in achievement"
             :class="{ active: item.complete, onin: item.completeID == 1 }"
             :key="index"
           >
+
             <div class="a-info">
+
               <p>
                 {{item.title}}
                 <span class="fr">{{item.completeCurrCount}}/{{item.completeNeedCount}}</span>
               </p>
+
               <div>
                 {{item.desc}}
+
                 <div class="reward" v-if="item.completeID == 0">
+
                   <div class="reward-icon">
                     <Icon type="logo-usd" />
                   </div>
+
                   <span class="reward-profit">{{item.profit}}</span>
                 </div>
+
               </div>
+
             </div>
+
             <div
               class="a-right"
               v-if="item.complete && item.completeID == 0"
@@ -683,12 +691,15 @@
             >
               <i-button type="primary">领取奖励</i-button>
             </div>
+
             <div class="a-right" v-if="item.completeID == 1">
               <i-button type="primary">已完成</i-button>
             </div>
+
           </li>
         </ul>
       </Modal>
+
 
       <!-- 帮助弹框 -->
       <Modal v-model="modalHelp" class-name="hide-footer" @on-cancel="hideHelp">
@@ -819,12 +830,9 @@ export default {
       modalVistor:false,
       swiperContent:[
         {text:'我是小蒜头，欢迎来闯关'},
-        {text:'加油哦'},
-        {text:'你可以的'},
-        {text:'可以升级等级和金币哦'},
-        {text:'去装饰自己吧'},
-        {text:'啦啦啦啦'},
-
+        {text:'通过闯关可以升级等级和金币哦'},
+        {text:'可以点击装扮选择喜欢的服饰哦'},
+        {text:'啦啦啦啦，去闯关吧，看看你有多棒！'},
       ],
       randomText:''
     };
@@ -840,9 +848,8 @@ export default {
         console.log('用户已经登录');
       }else{
         console.log('用户还没登录');
-        
         if(data.user.uid == -1){
-          console.log('游客登录')
+          console.log('游客登录');
         }else{
           window.localStorage.clear();
         }
@@ -893,7 +900,7 @@ export default {
 
   computed: {
    
-    // 计算已完成成就的数量
+    //计算已完成成就的数量
     targetList() {
       //let target = this.$store.state.achievement.filter(obj => obj.complete);
       //console.log("完成成就target:" + target);
@@ -1020,14 +1027,18 @@ export default {
           goldCount:self.user.money
         };
 
-        UpdateUserInfo(userData)
-        .then(response=>{
-          if(response.data.result == 'success'){
-            console.log('更新用户等级和金币数成功...')
-          }else{
-            console.log('更新用户等级和金币数失败...')
-          }
-        })
+        if(userData.userId!==-1){
+          console.log('用户登录。。。')
+          UpdateUserInfo(userData)
+          .then(response=>{
+            if(response.data.result == 'success'){
+              console.log('更新用户等级和金币数成功...')
+            }else{
+              console.log('更新用户等级和金币数失败...')
+            }
+          })
+
+        }
 
       });
 
@@ -1244,6 +1255,7 @@ export default {
     // 点击闯关  参数是 (关卡，科目Index)
     onSubject: function(val, pid) {
       this.$store.state.currSubject = val;   // 设置当前管卡
+      this.$store.state.currSubjectId = pid;
       if (val.learning == 0) {
         console.log(val.name + "-未开始闯关");
         this.$store.dispatch("startsubject", pid);

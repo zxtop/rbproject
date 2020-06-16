@@ -23,7 +23,7 @@
                 </div>
             </div>
 
-            <div class="text-main2" ref="main3">
+            <div class="text-main2" ref="main3" style="overflow-y:scroll;height:500px">
                 <div class="showQuestion">
                     <div class="question_content" style="font-size:14px;" v-html="questionForm.content"></div>
 
@@ -77,8 +77,9 @@
         </div>
 
         <div class="result_success" v-if="success">
-            <c-box @outResetQuestionList="beginQuestionClick"></c-box>
+            <c-box @outResetQuestionList="beginQuestionClick" @outQuestionList="hideSubject"></c-box>
         </div>
+
     </div>
 </template>
 <script>
@@ -107,7 +108,7 @@ export default {
                 subject_id: 20,
                 term_id: 0,
                 type_ids: [],
-                user_id: 0,
+                // user_id: 0,
                 version_id: 0,
                 difficulty: 0,
                 knowledge_points: [],
@@ -138,10 +139,12 @@ export default {
             fail: false,    //挑战失败
             success: false,   //挑战成功
             dt_img:'../static/images/dt.png',
-            num:0 //计算按钮点击次数
-
+            num:0, //计算按钮点击次数
+            currentSubjectIndex:0 //记录当前学科id
+            
         };
     },
+    props: ['showsubject'],
     components:{
         CGhost,
         CBox,
@@ -177,6 +180,7 @@ export default {
 
     },
     methods: {
+        
         hideSubject() {
             this.$emit("outsubject", false);
         },
@@ -197,18 +201,19 @@ export default {
             this.term_id = this.school_part.term[this.term_index].id;
         },
         beginQuestionClick() {
+            console.log('切题。。。。',this.showsubject)
             this.fail = false;
             this.success = false;
 
             this.u_yes_num = 0;
-
-            this.params.term_id = this.term_id;
-            this.params.user_id = this.uid;
-            //console.log(this.params)
-            // console.log(this.$store.state.currSubject.difficulty);
+            this.params.term_id = this.$store.state.user.termId;
             this.params.difficulty = this.$store.state.currSubject.difficulty;
             console.log('当前题目组的params.....',this.params);
 
+            this.uid = this.$store.state.user.uid;
+
+            this.u_gold_count = this.$store.state.user.money;
+            
             GetPageQuestion(this.params)
                 .then(res => {
                     //self.knowledge = response.data.data;
@@ -217,12 +222,19 @@ export default {
                     console.log(
                         "试题加载完毕----------------------------------"
                     );
+                    // res.data.data.map((item,index)=>{
+                    //     item.content = item.content.replace(new RegExp('http://renbo.7766.org:81','g'),'https://api.tk.ejex.net')
+                    // })
                     this.questionslist = res.data.data;
+                    // console.log(this.questionslist,'替换后。。。')
                     this.showQuestion();
                 })
                 .catch(error => {
                     console.log("获取题库列表失败", error);
                 });
+        },
+        quitQuestionClick(){
+            this.showsubject = false;
         },
         showQuestion() {
             this.questionForm = this.questionslist[0];
@@ -230,10 +242,10 @@ export default {
         },
 
         outanwserCilck(re){
-            console.log('回答的正确吗？',re);
+            console.log('回答的正确吗？',re,this.uid);
             if(re){
                 this.u_yes_num += 1;
-                //this.updataUserData();
+                this.updataUserData();
             }
             // setTimeout(this.nextQuestion, 1000);
             // this.nextQuestion();
@@ -249,18 +261,26 @@ export default {
 
         //更新用户的成绩
         updataUserData() {            
-            // if (this.u_yes_num == 10) {
-            //     this.u_level += 1;
-            // }
-            // this.u_gold_count += 10;
+            if (this.u_yes_num == 10) {
+                this.u_level += 1;
+            }
+
+            this.u_gold_count += 10;
             var studentInfo = {
                 studentId: this.uid,
                 level: this.u_level,
                 goldCount: this.u_gold_count
             };
+            this.$store.commit("SET_GOLD",studentInfo)
+            
             UpdateUserInfo(studentInfo).then(res => {
-                console.log(res);
+                console.log(res,'更新等级和金币');
             });
+
+            //存入store显示
+            this.$store.commit("SAVE_GAME")
+
+
         },
         //切换下一个题目
         nextQuestion() {
@@ -273,19 +293,18 @@ export default {
                 this.questionForm = this.questionslist[this.question_index];
                 this.num = 0
             }
-            
         },
         // 弹出收成
-    popAdd(meg) {
-      let self = this;
-      let popDom = document.createElement("div"); // 创建dom
-      popDom.classList.add("pop-next"); // 给dom添加class
-      popDom.innerHTML = meg;
-      self.$refs.eggexp.appendChild(popDom); // 在ref="eggexp"元素内添加dom
-      setTimeout(() => {
-        popDom.remove();
-      }, 500);
-    },
+        popAdd(meg) {
+            let self = this;
+            let popDom = document.createElement("div"); // 创建dom
+            popDom.classList.add("pop-next"); // 给dom添加class
+            popDom.innerHTML = meg;
+            self.$refs.eggexp.appendChild(popDom); // 在ref="eggexp"元素内添加dom
+            setTimeout(() => {
+                popDom.remove();
+            }, 500);
+        },
         addUserQuestion(uid, _id, type) {
             // 1 表示正确的题目
             if (type == 1) {
@@ -308,17 +327,19 @@ export default {
                 });
             }
         },
+
         // 做完 10 道题的结果
         showResult() {
             this.questionslist = null;
             this.question_index = 0;
             this.num = 0;
+
             console.log('最终结果是：'+ this.u_yes_num)
             if (this.u_yes_num == 10) {
                 console.log("全部答对");
                 this.success = true;
                 //激活下一关
-                this.$store.dispatch("activenewleve", 0);
+                this.$store.dispatch("activenewleve", this.$store.state.currSubjectId);
             } else {
                 console.log("继续加油");
                 this.fail = true;

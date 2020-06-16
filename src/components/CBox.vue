@@ -1,24 +1,32 @@
 <template>
     <div class="open-body">
         <div class="wrapper">
+
             <div class="bg rotate"></div>
+
             <div class="open-has" ref="open_has">
+
                 <h3 class="title-close">
                     <span class="user">闯关成功</span>您获得了一个宝箱
                 </h3>
+
                 <h3 class="title-open">
                     恭喜你，
                     <br />成功领取
                     <span class="user">奖励</span>
                 </h3>
+
                 <div class="mod-chest">
+
                     <div class="chest-close show" @click="openBox">
                         <div class="gift"></div>
                         <div class="tips">
                             <i class="arrow"></i>
                         </div>
                     </div>
+
                     <div class="chest-open" ref="chest_open">
+
                         <div class="mod-chest-cont open-cont">
                             <div class="content1">
                                 <div class="gift">
@@ -28,13 +36,25 @@
                                 </div>
                             </div>
                         </div>
-                        <Button type="success" style="background-color: #ed4014;
-    border-color: #ed4014;
-    position: absolute;
-    bottom: -4rem;
-    left: 50%;    width: 100px;margin-left: -50px;" @click="reLoadQUesionts">继续闯关</Button>
+
+                        <Button v-if="!isNextProject"  type="success" style="background-color: #ed4014;
+                            border-color: #ed4014;
+                            position: absolute;
+                            bottom: -4rem;
+                            left: 50%;    width: 100px;margin-left: -50px;" 
+                        @click="reLoadQUesionts">继续闯关</Button>
+
+                        <Button v-if="isNextProject"  type="success" style="background-color: #ed4014;
+                            border-color: #ed4014;
+                            position: absolute;
+                            bottom: -4rem;
+                            left: 50%; width: 100px;margin-left: -50px;" 
+                        @click="reLoadNextProject">下个科目</Button>
+
                     </div>
+
                 </div>
+
             </div>
         </div>
     </div>
@@ -45,8 +65,25 @@ export default {
     data() {
         return {
             reward:{},
+            isNextProject:false
         };
     },
+    created () {
+        let name = this.$store.state.currSubject.name;
+        //当前 关卡的 Index
+        let pIndex = ''
+        this.$store.state.subjectList[this.$store.state.currSubjectId].list.forEach((obj, index) => {
+            if (obj.name == name) {
+                pIndex = index;                  
+            }
+        });
+        if(pIndex == this.$store.state.subjectList[this.$store.state.currSubjectId].list.length - 1){
+            this.isNextProject = true
+        }else{
+            this.isNextProject = false;
+        }
+    },
+
     methods: {
         openBox(e) {
             this.getReward();
@@ -71,12 +108,18 @@ export default {
         getReward(){
             //console.log('计算奖励',this.$store.state.foods)
             this.reward = this.$store.state.foods[this.getRandomNumber(7)]
+            console.log(this.reward,"奖励。。。")
+            this.$store.commit("GET_GOOD",this.reward)
         },
         getRandomNumber (num){
             return Math.floor(Math.random()* num);
         },
         reLoadQUesionts(){
             this.$emit('outResetQuestionList',false)
+        },
+        reLoadNextProject(){
+            console.log('前往下一个科目。。。。。')
+            this.$emit('outQuestionList',false)
         }
     }
 };
