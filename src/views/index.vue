@@ -1318,6 +1318,7 @@ export default {
         this.success("修改成功");
         this.editUserName = !this.editUserName;
         this.$store.dispatch("setusername", this.newUserName);
+        
         //this.$store.dispatch('savegame');
       }
     },
