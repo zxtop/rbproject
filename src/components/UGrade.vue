@@ -157,7 +157,7 @@ import {SetUserGradeTemId,getUserLevel} from '@/api/user';
                                     this.$store.commit("SET_GOLD",studentInfo);
                                     this.$store.dispatch('setusergrade',obj);
                                 });
-                                window.scrollTo(0, 0)
+                                
                             }else{
                                 //游客登录
                                 let studentInfo = {
@@ -204,6 +204,23 @@ import {SetUserGradeTemId,getUserLevel} from '@/api/user';
                 //        });
                 //        this.data_term = arr;
                 //    }
+            }
+        },
+        mounted () {
+            // 优化移动端键盘收起时页面没能恢复原状的问题
+            let inputs = document.getElementsByTagName('input');
+            let timer = null;
+            for (let input of inputs) {
+                input.addEventListener('blur', function() {
+                    timer = setTimeout(() => {
+                        window.scrollTo(0, 0);
+                        timer = null;
+                    }, 0);
+                }, false);
+                input.addEventListener('focus', function() {
+
+                    timer && clearTimeout(timer);
+                }, false);
             }
         }
     }

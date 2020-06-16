@@ -160,7 +160,24 @@ import {regUser} from '@/api/user';
         },
         mounted () {
           this.loading = true;  
-        //   console.log(this.modalLogin,"用户登录组件")
+          //console.log(this.modalLogin,"用户登录组件")
+
+            // 优化移动端键盘收起时页面没能恢复原状的问题
+            let inputs = document.getElementsByTagName('input');
+            let timer = null;
+            for (let input of inputs) {
+                input.addEventListener('blur', function() {
+                    timer = setTimeout(() => {
+                        window.scrollTo(0, 0);
+                        timer = null;
+                    }, 0);
+                }, false);
+                input.addEventListener('focus', function() {
+
+                    timer && clearTimeout(timer);
+                }, false);
+            }
+
         },
         methods: {
             handleSubmit (name) {
@@ -184,7 +201,7 @@ import {regUser} from '@/api/user';
                                 }else{
                                     this.$Message.error(value.data.message);
                                 }
-                                window.scrollTo(0, 0)
+                                
                             });
 
                         }else{
@@ -205,7 +222,7 @@ import {regUser} from '@/api/user';
                                     //注册失败
                                     this.$Message.error(response.data.message);
                                 }
-                                window.scrollTo(0, 0)
+                                
                             })
                             .catch(error=>{
                                 this.$Message.error('注册失败');
