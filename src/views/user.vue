@@ -167,7 +167,6 @@ import {regUser} from '@/api/user';
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         if(name == 'formValidate'){
-                           
                             this.$store.dispatch("Login",this.formValidate)
                             .then((value)=>{
                                 
@@ -180,12 +179,12 @@ import {regUser} from '@/api/user';
                                     this.$store.commit('LOGIN_ID_NAME',value.data.user);
 
                                     //年级 学期选择
-                                    
                                     //存储用户设置
 
                                 }else{
                                     this.$Message.error(value.data.message);
                                 }
+                                window.scrollTo(0, 0)
                             });
 
                         }else{
@@ -206,6 +205,7 @@ import {regUser} from '@/api/user';
                                     //注册失败
                                     this.$Message.error(response.data.message);
                                 }
+                                window.scrollTo(0, 0)
                             })
                             .catch(error=>{
                                 this.$Message.error('注册失败');

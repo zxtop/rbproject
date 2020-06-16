@@ -157,6 +157,7 @@ import {SetUserGradeTemId,getUserLevel} from '@/api/user';
                                     this.$store.commit("SET_GOLD",studentInfo);
                                     this.$store.dispatch('setusergrade',obj);
                                 });
+                                window.scrollTo(0, 0)
                             }else{
                                 //游客登录
                                 let studentInfo = {

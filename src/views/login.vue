@@ -71,7 +71,7 @@ export default {
     fullScreen() {
       // 全屏切换
       //screenfull.toggle();
-      // this.$screenFull();
+      this.$screenFull();
 
       this.$router.push({
         path: "/start",
