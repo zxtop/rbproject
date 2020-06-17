@@ -9,6 +9,7 @@
   margin: 0 auto;
   min-width: 320px;
   max-width: 1024px;
+  /* min-height: 768px; */
   height: 100%;
   overflow: hidden;
  }
@@ -3661,3 +3662,10 @@ animation-delay: .6s;
 @media screen and (max-width:420px){
   .user-box{width: 28%;}
 }
+
+/* @media (min-width: 414px) {  
+  #app {  
+      min-height: 736px;  
+      height: 100vh;  
+  }  
+} */

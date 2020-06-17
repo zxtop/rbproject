@@ -660,7 +660,7 @@
             :class="{ active: item.complete, onin: item.completeID == 1 }"
             :key="index"
           >
-      
+
             <div class="a-info">
 
               <p>
@@ -998,6 +998,9 @@ export default {
             timer && clearTimeout(timer);
         }, false);
     }
+    //获取浏览器可视区高度
+    // console.log(window.screen.availHeight);
+    document.getElementsByTagName("body")[0].style.height = window.screen.availHeight+'px';
   },
   watch: {
     // 监听用户登录 年级学期和游客登录切换监控
