@@ -218,15 +218,34 @@ export default {
                 .then(res => {
                     //self.knowledge = response.data.data;
                     console.log(res);
+                    res.data.data.map((item,index)=>{
+                        console.log(item.type)
+                    })
                     this.questionslist = [];
                     console.log(
                         "试题加载完毕----------------------------------"
                     );
-                    // res.data.data.map((item,index)=>{
-                    //     item.content = item.content.replace(new RegExp('http://renbo.7766.org:81','g'),'https://api.tk.ejex.net')
-                    // })
+                    res.data.data.map((item,index)=>{
+                        if(item.content){
+                            item.content = item.content.replace(new RegExp('http://daincy.iok.la:81','g'),'https://api.tk.ejex.net');
+                        }
+                        if(item.option){
+                            item.option = item.option.replace(new RegExp('http://daincy.iok.la:81','g'),'https://api.tk.ejex.net');
+                        }
+                        if(item.answer[0]){
+                            if(item.answer[0].indexOf('对')>-1 ||item.answer[0].indexOf('错')>-1){
+                                item.type = {
+                                    name:'判断题'
+                                }
+                            }else{
+                                item.type = {
+                                    name:'单选题'
+                                }
+                            }
+                        }
+                    })
                     this.questionslist = res.data.data;
-                    // console.log(this.questionslist,'替换后。。。')
+                    console.log(this.questionslist,'替换后。。。')
                     this.showQuestion();
                 })
                 .catch(error => {

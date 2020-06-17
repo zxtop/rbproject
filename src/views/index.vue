@@ -660,7 +660,7 @@
             :class="{ active: item.complete, onin: item.completeID == 1 }"
             :key="index"
           >
-
+      
             <div class="a-info">
 
               <p>
@@ -844,14 +844,16 @@ export default {
 
       //判断用户是否登录
       let data = JSON.parse(localStorage.getItem('farmDate'));
-      if(data.user.uid){
-        console.log('用户已经登录');
-      }else{
-        console.log('用户还没登录');
-        if(data.user.uid == -1){
-          console.log('游客登录');
+      if(data){
+        if(data.user.uid){
+          console.log('用户已经登录');
         }else{
-          window.localStorage.clear();
+          console.log('用户还没登录');
+          if(data.user.uid == -1){
+            console.log('游客登录');
+          }else{
+            window.localStorage.clear();
+          }
         }
       }
     }else{
@@ -979,6 +981,23 @@ export default {
     this.init(); // 初始化
    
     this.goText(); //文字随机播放
+
+
+    // 优化移动端键盘收起时页面没能恢复原状的问题
+    let inputs = document.getElementsByTagName('input');
+    let timer = null;
+    for (let input of inputs) {
+        input.addEventListener('blur', function() {
+            timer = setTimeout(() => {
+                window.scrollTo(0, 0);
+                timer = null;
+            }, 0);
+        }, false);
+        input.addEventListener('focus', function() {
+
+            timer && clearTimeout(timer);
+        }, false);
+    }
   },
   watch: {
     // 监听用户登录 年级学期和游客登录切换监控
