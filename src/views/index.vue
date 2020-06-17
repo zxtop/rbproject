@@ -998,9 +998,12 @@ export default {
             timer && clearTimeout(timer);
         }, false);
     }
-    //获取浏览器可视区高度
+    // 获取浏览器可视区高度
     // console.log(window.screen.availHeight);
-    document.getElementsByTagName("body")[0].style.height = window.screen.availHeight+'px';
+    window.onresize=function(){
+      document.getElementsByTagName("body")[0].style.height = window.screen.availHeight+'px';
+      // console.log(document.getElementsByTagName("body")[0].style.height)
+    }
   },
   watch: {
     // 监听用户登录 年级学期和游客登录切换监控
