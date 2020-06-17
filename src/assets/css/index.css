@@ -11,7 +11,7 @@
   max-width: 1024px;
   /* min-height: 768px;*/
   height: 100%;
-  /* overflow: hidden; */
+  overflow: hidden;
  }
 .egg-wrapper span:before,
 .egg:before,

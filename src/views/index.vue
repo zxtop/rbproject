@@ -1000,10 +1000,15 @@ export default {
     }
     // 获取浏览器可视区高度
     // console.log(window.screen.availHeight);
-    window.onresize=function(){
-      document.getElementsByTagName("body")[0].style.height = window.screen.availHeight+'px';
-      // console.log(document.getElementsByTagName("body")[0].style.height)
-    }
+    // window.onresize=function(){
+    //   document.getElementsByTagName("body")[0].style.height = window.screen.availHeight+'px';
+    //   // console.log(document.getElementsByTagName("body")[0].style.height)
+    // }
+
+    document.body.addEventListener('focusout', () => {
+      //软键盘收起的事件处理
+      window.scroll(0, 0);
+    });
   },
   watch: {
     // 监听用户登录 年级学期和游客登录切换监控
