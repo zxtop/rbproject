@@ -23,53 +23,66 @@
                 </div>
             </div>
 
-            <div class="text-main2" ref="main3" style="overflow-y:scroll;height:500px">
-                <div class="showQuestion">
-                    <div class="question_content" style="font-size:14px;" v-html="questionForm.content"></div>
+            <div class="text-main2 ivu-scroll-wrapper" ref="main3" style="touch-action: none;">
 
-                    <div class="questio_option">
-                        <p style="font-size:14px;" v-html="questionForm.option"></p>
+                <div class="main2_content ivu-scroll-container" style="height:100px">
+
+                    <div class="showQuestion">
+                        <div class="question_content" style="font-size:14px;" v-html="questionForm.content"></div>
+
+                        <div class="questio_option">
+                            <p style="font-size:14px;" v-html="questionForm.option"></p>
+                        </div>
+                    </div>
+
+                    <div  ref="eggexp" style="width:100vw;height:5vh;position: relative;"><!--提示用--></div>
+
+                    <!-- 判断题 -->
+                    <div class="select_judge" v-if="questionForm.type && questionForm.type.name =='判断题'">
+                        <ul ref="btn_out1" id="btn_out1">
+                            <li class="btn">
+                                <c-btn1 @inClick="getClick" :zimuText="html_yes_iocn" :option="html_yes_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
+                            </li>
+
+                            <li class="btn">
+                                <c-btn1 @inClick="getClick" :zimuText="html_no_iocn" :option="html_no_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
+                            </li>
+                            
+                        </ul>
+                    </div>
+
+                    <!-- 不是判断题 -->
+                    <div
+                        class="select_option"
+                        v-if="questionForm.type && questionForm.type.name != '判断题'"
+                    >
+                        <ul ref="btn_out2" id="btn_out2">
+                            <li class="btn">
+                                <c-btn1 @inClick="getClick" :zimuText="html_a_iocn" :option="html_a_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
+                            </li>
+                            <li class="btn">
+                                <c-btn1 @inClick="getClick" :zimuText="html_b_iocn"  :option="html_b_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
+                            </li>
+                            <li class="btn">
+                                <c-btn1 @inClick="getClick" :zimuText="html_c_iocn" :option="html_c_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
+                            </li>
+                            <li class="btn">
+                                <c-btn1 @inClick="getClick" :zimuText="html_d_iocn" :option="html_d_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
+                            </li>
+                        </ul>
+
                     </div>
                 </div>
 
-                <div  ref="eggexp" style="width:100vw;height:5vh;position: relative;"><!--提示用--></div>
 
-                <!-- 判断题 -->
-                <div class="select_judge" v-if="questionForm.type && questionForm.type.name =='判断题'">
-                    <ul ref="btn_out1" id="btn_out1">
-                        <li class="btn">
-                            <c-btn1 @inClick="getClick" :zimuText="html_yes_iocn" :option="html_yes_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
-                        </li>
-
-                        <li class="btn">
-                            <c-btn1 @inClick="getClick" :zimuText="html_no_iocn" :option="html_no_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
-                        </li>
-                        
-                    </ul>
-                </div>
-
-                <!-- 不是判断题 -->
-                <div
-                    class="select_option"
-                    v-if="questionForm.type && questionForm.type.name != '判断题'"
-                >
-                    <ul ref="btn_out2" id="btn_out2">
-                        <li class="btn">
-                            <c-btn1 @inClick="getClick" :zimuText="html_a_iocn" :option="html_a_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
-                        </li>
-                        <li class="btn">
-                            <c-btn1 @inClick="getClick" :zimuText="html_b_iocn"  :option="html_b_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
-                        </li>
-                        <li class="btn">
-                            <c-btn1 @inClick="getClick" :zimuText="html_c_iocn" :option="html_c_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
-                        </li>
-                        <li class="btn">
-                            <c-btn1 @inClick="getClick" :zimuText="html_d_iocn" :option="html_d_iocn" :answer="questionForm.answer" @outBtnClick="outanwserCilck"></c-btn1>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </div>
+
+        <Scroll :on-reach-bottom="handleReachBottom">
+            <Card dis-hover v-for="(item, index) in list1" :key="index" style="margin: 32px 0">
+                Content {{ item }}
+            </Card>
+        </Scroll>
 
 
         <div class="result_fail" v-if="fail">            
@@ -140,8 +153,10 @@ export default {
             success: false,   //挑战成功
             dt_img:'../static/images/dt.png',
             num:0, //计算按钮点击次数
-            currentSubjectIndex:0 //记录当前学科id
+            currentSubjectIndex:0, //记录当前学科id
             
+
+            list1: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         };
     },
     props: ['showsubject'],
@@ -180,7 +195,17 @@ export default {
 
     },
     methods: {
-        
+        handleReachBottom () {
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        const last = this.list1[this.list1.length - 1];
+                        for (let i = 1; i < 11; i++) {
+                            this.list1.push(last + i);
+                        }
+                        resolve();
+                    }, 2000);
+                });
+            },
         hideSubject() {
             this.$emit("outsubject", false);
         },
@@ -364,6 +389,10 @@ export default {
                 this.fail = true;
             }
         },
+    },
+    mounted () {
+        // let list = document.querySelector('.main2_content')
+        // list.addEventListener('touchmove', e => e.stopPropagation(), false)
     }
 };
 </script>

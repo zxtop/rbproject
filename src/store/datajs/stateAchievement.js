@@ -32,9 +32,9 @@ module.exports = {
         }
     }, {
         id: 2,
-        title: '闯关小能手',    // 勋章名称
+        title: '闯关小能手',     // 勋章名称
         desc: '闯过第一关',      // 描述
-        profit: '1000',    // 奖励
+        profit: '1000',         // 奖励
         complete: false,          // 是否完成
         completeID: 0,
         completeTypeId: 1,        // 成就类别，1=闯关次数；2=获得金币数；3=解锁粮食数

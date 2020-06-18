@@ -5,11 +5,9 @@
  * Copyright (c) 2017.12.06 Moonlight, Inc.
  */
  #app {
-  /* width: 100%; */
   margin: 0 auto;
   min-width: 320px;
   max-width: 1024px;
-  /* min-height: 768px;*/
   height: 100%;
   overflow: hidden;
  }
@@ -3624,11 +3622,11 @@ animation-delay: .6s;
 }
 
 .user_visitor{text-align: center;}
-.question_content{
+/* .question_content{
   height: auto;
   max-height: 280px;
   overflow-y: scroll;
-}
+} */
 
 .chick-swiper{background: rgb(250, 222, 61,0.8);padding: 5px;border-radius: 10px;z-index: 9;
   text-align: center;border: 2px solid #ff8800;

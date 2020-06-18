@@ -662,7 +662,6 @@
           >
 
             <div class="a-info">
-
               <p>
                 {{item.title}}
                 <span class="fr">{{item.completeCurrCount}}/{{item.completeNeedCount}}</span>
@@ -998,11 +997,12 @@ export default {
             timer && clearTimeout(timer);
         }, false);
     }
+
     // 获取浏览器可视区高度
     // console.log(window.screen.availHeight);
     // window.onresize=function(){
     //   document.getElementsByTagName("body")[0].style.height = window.screen.availHeight+'px';
-    //   // console.log(document.getElementsByTagName("body")[0].style.height)
+    //   console.log(document.getElementsByTagName("body")[0].style.height)
     // }
 
     document.body.addEventListener('focusout', () => {
