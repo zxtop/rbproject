@@ -1,4 +1,5 @@
 <template>
+
     <div class="subject-wrap">
         <!-- 背景图片随机加载 -->
         <c-bg></c-bg>
@@ -23,9 +24,9 @@
                 </div>
             </div>
 
-            <div class="text-main2 ivu-scroll-wrapper" ref="main3" style="touch-action: none;">
+            <div class="text-main2" ref="main3">
 
-                <div class="main2_content ivu-scroll-container" style="height:100px">
+                <div class="main2_content" style="height:500px;overflow-y:auto;">
 
                     <div class="showQuestion">
                         <div class="question_content" style="font-size:14px;" v-html="questionForm.content"></div>
@@ -78,13 +79,6 @@
             </div>
         </div>
 
-        <Scroll :on-reach-bottom="handleReachBottom">
-            <Card dis-hover v-for="(item, index) in list1" :key="index" style="margin: 32px 0">
-                Content {{ item }}
-            </Card>
-        </Scroll>
-
-
         <div class="result_fail" v-if="fail">            
             <c-ghost @outResetQuestionList="beginQuestionClick"></c-ghost>
         </div>
@@ -92,8 +86,8 @@
         <div class="result_success" v-if="success">
             <c-box @outResetQuestionList="beginQuestionClick" @outQuestionList="hideSubject"></c-box>
         </div>
-
     </div>
+
 </template>
 <script>
 import SchoolParts from "@/store/datajs/school_part.js"; //学段、学科、学期的配置文件
@@ -102,7 +96,8 @@ import {
     getUserLevel,
     UpdateUserInfo,
     AddUserQuestionYes,
-    AddUserQuestionNo
+    AddUserQuestionNo,
+    GetUserQuestionYes
 } from "@/api/user";
 import CGhost from "@/components/CGhost";
 import CBox from "@/components/CBox";
@@ -169,7 +164,7 @@ export default {
     computed: {
       proess_in(){
           return this.question_index * 10
-      }  
+      }
     },
     created() {
         //this.school_part = this.school_parts[0];
@@ -196,16 +191,16 @@ export default {
     },
     methods: {
         handleReachBottom () {
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        const last = this.list1[this.list1.length - 1];
-                        for (let i = 1; i < 11; i++) {
-                            this.list1.push(last + i);
-                        }
-                        resolve();
-                    }, 2000);
-                });
-            },
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    const last = this.list1[this.list1.length - 1];
+                    for (let i = 1; i < 11; i++) {
+                        this.list1.push(last + i);
+                    }
+                    resolve();
+                }, 2000);
+            });
+        },
         hideSubject() {
             this.$emit("outsubject", false);
         },
@@ -236,7 +231,6 @@ export default {
             console.log('当前题目组的params.....',this.params);
 
             this.uid = this.$store.state.user.uid;
-
             this.u_gold_count = this.$store.state.user.money;
             
             GetPageQuestion(this.params)
@@ -245,7 +239,7 @@ export default {
                     console.log(res);
                     res.data.data.map((item,index)=>{
                         console.log(item.type)
-                    })
+                    });
                     this.questionslist = [];
                     console.log(
                         "试题加载完毕----------------------------------"
@@ -288,9 +282,13 @@ export default {
         outanwserCilck(re){
             console.log('回答的正确吗？',re,this.uid);
             if(re){
+                //正确
                 this.u_yes_num += 1;
                 this.updataUserData();
+
             }
+            //记录正确答案
+            this.addUserQuestion(this.uid,this.questionForm._id,re)
             // setTimeout(this.nextQuestion, 1000);
             // this.nextQuestion();
         },
@@ -323,8 +321,6 @@ export default {
 
             //存入store显示
             this.$store.commit("SAVE_GAME")
-
-
         },
         //切换下一个题目
         nextQuestion() {
@@ -338,6 +334,7 @@ export default {
                 this.num = 0
             }
         },
+
         // 弹出收成
         popAdd(meg) {
             let self = this;
@@ -349,11 +346,12 @@ export default {
                 popDom.remove();
             }, 500);
         },
+
         addUserQuestion(uid, _id, type) {
             // 1 表示正确的题目
-            if (type == 1) {
+            if (type) {
                 AddUserQuestionYes(uid, _id).then(res => {
-                    console.log(res);
+                    console.log('回答正确...',res);
                 });
             } else {
                 //添加到错题
@@ -367,7 +365,7 @@ export default {
                     termId: this.questionForm.term.id
                 };
                 AddUserQuestionNo(StudentPointNo).then(res => {
-                    console.log(res);
+                    console.log('回答错误...',res);
                 });
             }
         },
@@ -381,6 +379,7 @@ export default {
             console.log('最终结果是：'+ this.u_yes_num)
             if (this.u_yes_num == 10) {
                 console.log("全部答对");
+               
                 this.success = true;
                 //激活下一关
                 this.$store.dispatch("activenewleve", this.$store.state.currSubjectId);
@@ -388,6 +387,11 @@ export default {
                 console.log("继续加油");
                 this.fail = true;
             }
+
+             //获取正确的题目
+            // GetUserQuestionYes(this.uid).then(res=>{
+            //     console.log('返回作答信息。。。。',res)
+            // })
         },
     },
     mounted () {

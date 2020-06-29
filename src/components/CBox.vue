@@ -65,7 +65,8 @@ export default {
     data() {
         return {
             reward:{},
-            isNextProject:false
+            isNextProject:false,
+            isclick:true
         };
     },
     created () {
@@ -86,24 +87,29 @@ export default {
 
     methods: {
         openBox(e) {
-            this.getReward();
-            e.currentTarget.classList.add("shake");
-            var that = e.currentTarget;
-            var _this = this
-            that.addEventListener(
-                "webkitAnimationEnd",
-                function() {
-                    _this.$refs.open_has.classList.add("opened");
-                    setTimeout(function() {
-                        that.classList.remove("show");
-                         _this.$refs.chest_open.classList.add("show");
+            if(this.isclick){
+                this.isclick = false;
+                this.getReward();
+                e.currentTarget.classList.add("shake");
+                var that = e.currentTarget;
+                var _this = this
+                that.addEventListener(
+                    "webkitAnimationEnd",
+                    function() {
+                        _this.$refs.open_has.classList.add("opened");
                         setTimeout(function() {
-                            _this.$refs.chest_open.classList.add("blur");
-                        }, 500);
-                    }, 200);
-                },
-                false
-            );
+                            that.classList.remove("show");
+                             _this.$refs.chest_open.classList.add("show");
+                            setTimeout(function() {
+                                _this.$refs.chest_open.classList.add("blur");
+                            }, 500);
+                        }, 200);
+                    },
+                    false
+                );
+            }else{
+                return;
+            }
         },
         getReward(){
             //console.log('计算奖励',this.$store.state.foods)

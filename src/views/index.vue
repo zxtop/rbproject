@@ -1,8 +1,8 @@
 <template>
   <div id="app" :class="{onSubject: isSubject}">
+    
     <div class="container" :class="{ beingskin: skinBox}">
       <div class="game-title">蒜瓣闯关</div>
-
       <!-- 用户资料 -->
       <div class="user-box" @click="showUser">
 
@@ -715,7 +715,6 @@
 
 
     </div>
-
     <!-- 做题组件 -->
     <c-subject @outsubject="hideSubject" :showsubject="isSubject" ref="dosubject"></c-subject>
     
@@ -980,8 +979,7 @@ export default {
     this.init(); // 初始化
    
     this.goText(); //文字随机播放
-
-
+  
     // 优化移动端键盘收起时页面没能恢复原状的问题
     let inputs = document.getElementsByTagName('input');
     let timer = null;

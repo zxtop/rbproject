@@ -50,11 +50,18 @@ export function login(data) {
     return http.postJava(url,null)
   }
 
+  //获取学生正确的题目
+  export function GetUserQuestionYes(params){
+    const url = Global.myURL+'api/systemconfig/student/student_point_yes';
+    return http.postJava(url,params);
+  }
+
   //添加错误的题目
   export function AddUserQuestionNo(data){
     const url = Global.myURL+'api/systemconfig/student/add_student_point_no'
     return http.postJava(url,data)
   }
+
 
   //获取用户错题库
   export function GetUserQuestionNo(params){
@@ -67,4 +74,6 @@ export function login(data) {
     const url = Global.myURL+'api/systemconfig/student/update_student_info'
     return http.post(url,data)
   }
+
+
 

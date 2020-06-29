@@ -6,4 +6,3 @@ export function GetPageQuestion(data){
     const url = Global.baseURL+'/api/v1/teacher-questions/error/query'
     return http.post(url,data)
 }
-

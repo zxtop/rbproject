@@ -3073,6 +3073,8 @@ top: 10px;
 .subject-list {
   display: flex;
   flex-wrap: wrap;
+  height: 300px;
+  overflow-y: auto;
 }
 .subject-list li {
   position: relative;
@@ -3605,7 +3607,7 @@ animation-delay: .6s;
   100%{opacity: 1;}
 }
 
-*{touch-action: none;}
+/* *{touch-action: none;} */
 .grade-btn .ivu-form-item-content{margin-left: 0px!important;}
 .grade-btn .ivu-form-item-content button{display: block;margin: 0 auto;}
 
